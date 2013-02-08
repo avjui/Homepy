@@ -68,7 +68,6 @@ def start():
 	#daemon.subscribe()
 
 	try:
-		print "Here we are"
 		#cherrypy.process.servers.check_port(core.HTTP_HOST, core.HTTP_PORT)
 		cherrypy.engine.start()
 		cherrypy.engine.block

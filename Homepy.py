@@ -76,7 +76,8 @@ def main():
     core.CFG = ConfigObj(core.CONFIG_FILE, encoding='UTF8')
  
     # Test for sonos DB if exist start updating the DB in background
-    if os.path.isfile("/mnt/Media/Downloads/Homematic/sonos.db"):
+    core.SONOS_DB_FILE = os.path.join(core.PROG_DIR, 'sonos.db')
+    if os.path.isfile(core.SONOS_DB_FILE):
           cherrypy.process.plugins.Monitor(cherrypy.engine,SonosDB().UpdateSonosTable,5).subscribe()
           log("Background scan for sonos information was startet", 'info')
 

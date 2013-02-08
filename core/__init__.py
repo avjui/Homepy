@@ -7,6 +7,7 @@ PROG_DAEMONIZE = False
 
 CFG = None
 DB_FILE = None
+SONOS_DB_FILE = None
 CONFIG_FILE = None
 
 HTTP_PORT = None

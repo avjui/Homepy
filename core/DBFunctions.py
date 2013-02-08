@@ -11,25 +11,12 @@ from core.Helper import Replacesq
 
 db_lock = threading.Lock()
 
-def dbFilename(filename="homepy.db"):
-
-	ABS_PATH = "/mnt/Media/Downloads/Homematic/"	
-	file = os.path.join(ABS_PATH, filename)
-	print file
-	return os.path.join(ABS_PATH, filename)
-
-
 class DBFunction:
 
-	filename = "homepy.db"
-	connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
-	cursor = connection.cursor()
-
-		
 
 	def getCountID(self, tableName, indicatorName):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		if indicatorName == None:
@@ -55,7 +42,7 @@ class DBFunction:
 		interfaceIP = interfaceIP.upper()
 		interfaceName = interfaceName.upper()
 		
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 		sql = "INSERT INTO interfaces(InterfaceSerial, InterfaceIP, InterfaceName) VALUES('" + interfaceSerial + "','" + interfaceIP + "','" + interfaceName + "')"
 		cursor.execute(sql)
@@ -65,7 +52,7 @@ class DBFunction:
 
 	def RemoveInterface(self, interfaceSerial):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM interfaces WHERE InterfaceSerial = '" + interfaceSerial + "'"
@@ -78,7 +65,7 @@ class DBFunction:
 	def GetInterfaceList(self):
 
 		data = ""
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "SELECT InterfaceSerial, InterfaceName FROM interfaces"
@@ -98,7 +85,7 @@ class DBFunction:
 		deviceName = deviceName.upper()
 		roomName = roomName.upper()
 		
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 		for serial in deviceSerial:
 			if not serial.endswith(':0'):
@@ -117,7 +104,7 @@ class DBFunction:
 
 	def GetDeviceList(self, roomName=''):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		if roomName == '':
@@ -130,14 +117,13 @@ class DBFunction:
 		cursor.execute(sql)
 		result = cursor.fetchall()
 		cursor.close()
-		print result
 	    	return result
 
 
 
 	def RemoveDevice(self, deviceSerial):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM devices WHERE DeviceSerial = '" + deviceSerial + "'"
@@ -149,7 +135,7 @@ class DBFunction:
 
 	def AddSonos(self):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		devices = Sonos().GetDeviceList()		
@@ -161,7 +147,7 @@ class DBFunction:
 
 		cursor.close()
 		
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/sonos.db", timeout=20)
+		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		for device in devices:
@@ -184,7 +170,7 @@ class DBFunction:
 
 
 		result = []
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "SELECT SonosIP, SonosName, SonosRoom FROM sonos"
@@ -200,7 +186,7 @@ class DBFunction:
 
 	def UpdateSonosList(self, sonosName, sonosRoom):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "UPDATE sonos SET SonosRoom='%s' WHERE SonosName='%s'", (sonosRoom, sonosName)
@@ -214,7 +200,7 @@ class DBFunction:
 
 	def RemoveSonos(self, sonosName):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM sonos WHERE SonosName = '" + sonosName + "'"
@@ -222,7 +208,7 @@ class DBFunction:
 		connection.commit()
 		cursor.close()
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/sonos.db", timeout=20)
+		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DROP TABLE IF EXISTS '" + sonosName + "'"
@@ -244,7 +230,7 @@ class DBFunction:
 		XbmcPassword = XbmcPassword.upper()
 		XbmcRoom = XbmcRoom.upper()
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 		cursor.execute('INSERT INTO xbmc (XbmcIP, XbmcName, XbmcUsername, XbmcPassword, XbmcRoom) VALUES(?,?,?,?,?)', (XbmcIP, XbmcName, XbmcUsername, XbmcPassword, XbmcRoom))
 		connection.commit()
@@ -253,7 +239,7 @@ class DBFunction:
 
 	def GetXbmcList(self):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "SELECT XbmcIP, XbmcName, XbmcRoom FROM xbmc"
@@ -266,7 +252,7 @@ class DBFunction:
 
 	def RemoveXbmc(self, xbmcIP):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM xbmc WHERE XbmcIP = '" + xbmcIP + "'"
@@ -284,7 +270,7 @@ class DBFunction:
 
 		roomName = roomName.upper()
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "INSERT INTO rooms (OrderID, RoomName) VALUES(%s,'%s')"% (orderID, roomName)
@@ -298,7 +284,7 @@ class DBFunction:
 		
 		result = []
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 		try:
 			sql = "SELECT OrderID, RoomName FROM rooms ORDER BY OrderID"
@@ -315,7 +301,7 @@ class DBFunction:
 
 	def RemoveRoom(self, roomName):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM rooms WHERE RoomName = '" + roomName + "'"
@@ -333,7 +319,7 @@ class DBFunction:
 
 		sceneName = sceneName.upper()
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "INSERT INTO scenes (OrderID, SceneName) VALUES(%s,'%s')"% (orderID, sceneName.upper())
@@ -360,7 +346,7 @@ class DBFunction:
 
 	def GetScenes(self):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "SELECT OrderID, SceneName FROM scenes"
@@ -376,7 +362,7 @@ class DBFunction:
 
 
 		self.data = {}
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		if scene_name == None:
@@ -400,7 +386,7 @@ class DBFunction:
 
 	def RemoveSceneElements(self, sceneName, sceneRoom, sceneDevice):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sceneName = sceneName.upper()
@@ -421,7 +407,7 @@ class DBFunction:
 
 	def UpdateSceneElements(self, sceneName, sceneRoom, sceneDevice):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sceneName = sceneName.upper()
@@ -442,7 +428,7 @@ class DBFunction:
 
 	def RemoveScene(self, sceneName):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		sql = "DELETE FROM '" + sceneName + "'"
@@ -458,7 +444,7 @@ class DBFunction:
 
 	def CeckDatabase(self):
 
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/homepy.db", timeout=20)
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
@@ -482,7 +468,7 @@ class SonosDB:
 		try:
 			devices = Sonos().GetTrackInfo()
 		
-			connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/sonos.db", timeout=20)
+			connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
 			cursor = connection.cursor()
 
 			for key,device in devices.iteritems():
@@ -509,7 +495,7 @@ class SonosDB:
 
 		devices = DBFunction().GetSonosList()
 				
-		connection = sqlite3.connect("/mnt/Media/Downloads/Homematic/sonos.db", timeout=20)
+		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		for device in devices:
