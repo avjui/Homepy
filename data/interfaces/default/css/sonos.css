@@ -1,0 +1,68 @@
+div.main div.sonos {
+	background:#222;
+	width:775;
+	clear:both;
+	float:left;
+	height:20%
+	padding-left:30px;
+	padding-right:30px;
+	padding-bottom:-30px;
+	margin-bottom:35px;
+	margin-left:25px;
+	font-family:"Myriad Pro", "Trebuchet MS", sans-serif;
+	font-size:14px;
+	color:#aaa;
+	text-transform:uppercase;
+	text-decoration:none;
+	text-shadow:1px 1px 1px #000;
+	-moz-box-shadow:0px 0px 4px #000 inset;
+	-webkit-box-shadow:0px 0px 4px #000 inset;
+	box-shadow:0px 0px 4px #000 inset;
+}
+
+div.main div.sonos table.info{
+	color:#0B75AF;
+	margin-top: 30px;
+	margin-left:35px;
+	height:240px; 
+	text-align:left;
+	position:relative;
+}
+
+div.main div.sonos table.info td{
+	color:#fff; 
+}
+
+div.main div.sonos div.image{
+	margin:40px 40px;
+}
+
+div.main div.sonos div.reflection {
+	position:relative;
+	margin-top:-2px;
+}
+
+div.main div.sonos div.reflection img {
+    -webkit-transform: scaleY(-1);
+       -moz-transform: scaleY(-1);
+        -ms-transform: scaleY(-1);
+         -o-transform: scaleY(-1);
+            transform: scaleY(-1);
+    filter: flipv; opacity:0.20;
+    filter: alpha(opacity='20');
+}
+div.main div.sonos div.overlay { position:absolute; top:0px; left:0px; width:100%; height:100%;
+    background-image: -moz-linear-gradient( center bottom, rgb(34, 34, 34) 60%, rgba(34,34,34,0) 75%);
+    background-image: -o-linear-gradient( rgba(34, 34, 34,0) 25%, rgb(34, 34, 34) 40%);
+    background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0.60, rgb(34,34,34)), color-stop(0.75, rgba(34,34,34,0)));
+    filter: progid:DXImageTransform.Microsoft.Gradient( gradientType=0, startColor=0, EndColorStr=#222222);
+}
+
+div.main div.sonos div.control{
+	clear:both;
+	position:relative;
+	bottom:90px;
+       margin-left:25px;
+	z-index:10;
+
+}

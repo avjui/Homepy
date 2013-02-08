@@ -1,0 +1,17 @@
+#tabmenue {
+  padding: 3px;
+  border-bottom: 1px solid #222; 
+}
+#tabmenue li {
+  display: inline; 
+}
+#tabmenue li a {
+  padding: 3px 1em;
+  margin-left: 3px;
+  border: 1px solid #777;
+  border-bottom: 0;
+  text-decoration: none; 
+}
+#tabmenue li a#aktuell {
+  padding-bottom: 4px; 
+  border-bottom: 1px solid #fc0;

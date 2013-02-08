@@ -1,0 +1,143 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+	<div class="config_rooms" align=center>
+	<link rel="stylesheet" href="css/config_rooms.css" type="text/css" media="screen"/>
+		<p>		 
+			<form action="addRoom">
+			<lable><h1><u>${title}</u></h1></lable>
+			<table cellpadding="5">
+				<caption><h2><u>Add a Room</u></h2></caption>
+					<tr>
+						<td>
+							<label><b>Room Name</b></label>
+							<br />
+							<input style="width:180px" type="text" name="room_name" id="room_name" value='' />
+						</td>
+						<td class="add_room" >
+							<input style="width:80px" type="submit" value="Add">
+						</td>
+					</tr>
+			</table>
+			</form>
+		</p>
+	<div id="roomtable" class="roomtable">
+		<p>
+			<table id="roomsort" class="grid" cellpadding="5" width=80% align=center >
+				<thead>
+					<tr><th>Raumname</th><th>Action</th></tr>
+				</thead>
+				<tbody align=center>
+				%for room in roomlist:
+					<%
+						rname = room[1]
+					%>
+						<tr><td>${rname}</td><td class="add_room" ><input style="width:70px" type="button" onclick="location.href='removeRoom?room_name=${rname}'" value="Remove"></td></tr>	
+				%endfor
+				</tbody>
+			</table>
+		</p>
+	</div>
+	</div>
+	<div class="config_rooms" align=center>
+		<form action="addScene">
+			<table cellpadding="5">
+				<caption><h2><u>Add a new Scene</u></h2></caption>
+					<tr>
+						<td>
+							<label><b>Scene Name</b></label>
+							<br />
+							<input style="width:180px" type="text" name="scene_name" id="scene_name" value='' />
+						</td>
+						<td class="add_room" >
+							<input style="width:80px" type="submit" value="Add">
+						</td>
+					</tr>
+			</table>
+			</form>
+		</p>
+	<tr><td>&nbsp;</td></tr>
+	<h2><u>Scenen</u></h2>
+	<div id="scenetable" class="scenetable">
+		<p>
+		%for key,values in scenelist.iteritems():
+			<%
+				sname = key
+			%>
+					
+		<table id="scenesort" class="grid" cellpadding="5" width=80% align=center >
+			<caption><u>${sname}</u></caption>
+					<thead>
+						<tr><th style="width:350px">Komplete Raeume</th><th style="width:350px">Devices</th><th style="width:250px"><input style="width:70px" type="button" onclick="location.href='removeScene?scene_name=${sname}'" value="Remove"></th></tr>
+					</thead>
+					<tbody align=center>
+					%for value in values:
+						<%
+							sroom = value[1]
+							sdevice = value[2]
+						%>
+						%if sroom != None and sdevice == None:
+							<tr ><td>${sroom}</td><td></td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeSceneElement?scene_name=${sname}&scene_room=${sroom}&scene_device=None'" value="Remove"></td></tr>
+						%elif sroom == None and sdevice != None:
+							<tr ><td></td><td>${sdevice}</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeSceneElement?scene_name=${sname}&scene_room=None&scene_device=${sdevice}'" value="Remove"></td></tr>
+						%elif sroom != None and sdevice != None:
+							<tr ><td>${sroom}</td><td>${sdevice}</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeSceneElement?scene_name=${sname}&scene_room=${sroom}&scene_device=None'" value="Remove"></td></tr>
+						%endif
+					%endfor
+					</tbody>
+				</table>
+		<tr><td>&nbsp;</td></tr>
+		%endfor
+			</p>
+		</div>
+	<div class="scenetable">
+		<p>
+			<table id="scenesort" class="grid" cellpadding="5" width=80% align=center >
+					<thead>
+						<tr><th></th><th style="width:350px">Komplete Raeume</th><th style="width:350px">Devices</th><th style="width:250px">Action</th></tr>
+					</thead>
+					<tbody align=center>
+						<tr>
+							<td>
+							<form action="addElementToScene">
+							<select name="scene_name" size="1" style="width:150px">
+								<option selected>--- Please choose a room ---</option>
+								%for key,values in scenelist.iteritems():
+									<%
+										scenename = key		
+									%>
+									<option>${scenename}</option>
+								%endfor
+							</select>
+							</td>
+							<td>
+							<select name="scene_room" size="1" style="width:175px">
+								<option selected>--- Please choose a room ---</option>
+								%for room in roomlist:
+									<%
+										rname = room[1]
+									%>
+									<option>${rname}</option>
+								%endfor
+							</select>
+							</td>
+							<td>
+							<select name="scene_device" size="1" style="width:175px">
+								<option selected>--- Please choose a device ---</option>
+								%for device in devicelist:
+									<%	
+									dname = device[1]
+									%>
+									<option>${dname}</option>
+								%endfor
+							</select>
+							</td>
+							<td class="add_room" >
+							<input style="width:120px" type="submit"  value="Add to Scene"></td></tr>	
+							</td>
+						</tr>
+					</tbody>
+				</form>
+		</div>
+	</div>
+</%def>

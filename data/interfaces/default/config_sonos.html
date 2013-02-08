@@ -1,0 +1,39 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+	<div class="config_sonos" align=center>
+	<link rel="stylesheet" href="css/config_sonos.css" type="text/css" media="screen"/>
+		<p>		 
+			<lable><h1><u>${title}</u></h1></lable>
+				<table id="interfacesort" class="grid" cellpadding="5" align=center >
+					<thead>
+						<tr><th>IP</th><th>Device Name</th><th>Room</th><th colspan="2">Action</th></tr>
+					</thead>
+					<tbody id="sonosdevicelist" align=center>
+						%for device in devicelist:
+						<%
+							sname = device[1]
+							sip = device[0]
+						%>
+						<tr><td>${sip}</td><td>${sname}</td><td>
+									<select name="device_room" size="1" style="width:200px">
+										<option selected>---</option>
+										%for room in roomlist:
+											<%
+												rname = room[1]
+											%>
+											<option>${rname}</option>
+										%endfor
+									</select>
+									</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='updateSonos?device_name=${sname}&device_room='"selected"'" value="Update"></td><td><input style="width:70px" type="button" onclick="location.href='removeSonos?device_name=${sname}'"  value="Remove"></td></tr>
+						%endfor
+					</tbody>
+				</table>
+
+		<p>
+
+			<input style="width:150px" type="button" onclick="location.href='searchForSonos'" value="Serach for New Device"></p>
+		</p>
+	</div>
+	
+</%def>

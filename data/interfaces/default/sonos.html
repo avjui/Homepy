@@ -1,0 +1,107 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+<%
+	i=0
+%>
+	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="js/jquery-ui-1.8.21.custom.min.js"></script>
+  		<script type="text/javascript" src="js/reflection.js"></script>
+ 		<script type="text/javascript" src="js/jquery-1.9.0.js"></script>
+		%for key,devices in trackinfolist.iteritems():
+				<%
+				for device in devices:
+					i = i + 500
+					zonename = device[0]
+					zonenip = device[1]
+					art = device[2]
+					title = device[3]
+					album = device[4]		
+					artist = device[5]
+					coverid = device[1].replace('.', '')
+					time = 4000 + i
+				%>			
+		
+		<div class="sonos" name ="sonos" align=center>
+		 	<table>
+			<tr><td>		
+			<div class="image" id="image">
+				<img src=${art} id="${coverid}" alt="Album Art" height="150" width="150">
+				<div class="reflection">
+					<img src=${art} id="${coverid}-1" alt="Album Art" height="150" width="150"/>
+					<div class="overlay"></div>
+				</div>
+			</div>
+			<div class="control">
+				<img src=images/media/play.png id="play-${zonename}" height="32" width="32"/>
+				<img src=images/media/pause.png id="pause-${zonename}" height="32" width="32"/>
+				<img src=images/media/stop.png id="stop-${zonename}" height="32" width="32"/>
+				<img src=images/media/first.png id="fwd-${zonename}" height="32" width="32"/>
+				<img src=images/media/last.png id="rew-${zonename}" height="32" width="32"/>
+			</div>	
+			<div class="section">   
+				<span class="tooltip"></span>   
+				<div id="slider"></div>  
+				<span class="volume"></span>  
+			</div>  
+			</td><td>
+			<table  class="info" align=left>
+					<caption><h2><u>${zonename}</u></h2></caption>
+						<tr><th align=left border="0">Track</th></tr>
+						<tr><td id="${coverid}-title" style="width:250px">${title}</td></tr>
+						<tr><th align=left>Album</th></tr>
+						<tr><td id="${coverid}-album" style="width:150px">${album}</td>
+						<tr><th align=left>Artist</th></tr>
+						<tr><td id="${coverid}-artist" style="width:150px">${artist}</td>
+				</table>
+			</td></tr>
+			</table>
+		<script type="text/javascript">
+
+			// Update the cover
+			$(document).ready(function() {
+				window.setInterval(function(){
+				$.ajax({
+					type: 'POST',
+					dataType: 'json',
+					url: 'functionSonos',
+					data: 'zone_name=${zonename}&function=getcover',
+					cache: true,
+					success: function(result) {
+						$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
+						$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
+						$('#${coverid}-title').text(result[1]);
+						$('#${coverid}-album').text(result[2]);
+						$('#${coverid}-artist').text(result[3]);
+
+					},
+					});
+			}, ${time});
+			});
+
+			// Send th action for the player	
+			$('#play-${zonename}').click(function(){
+				$.get("functionSonos", { zonen_ip:"${zonenip}", function:"play" }).done(function(data) {
+			});
+			});
+
+			$('#pause-${zonename}').click(function(){
+			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"pause" });
+			});
+
+			$('#stop-${zonename}').click(function(){
+			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"stop" });
+			});
+
+			$('#fwd-${zonename}').click(function(){
+			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"next" });
+			});
+
+			$('#rew-${zonename}').click(function(){
+			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"previous" });
+			});
+			
+		</script>
+		</div>
+		%endfor
+</%def>

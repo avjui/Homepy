@@ -1,0 +1,56 @@
+div.main {
+	background:#444;
+	width:795px;
+	padding-left:30px;
+	padding-right:30px;
+	margin-left:25px;
+	font-family:"Myriad Pro", "Trebuchet MS", sans-serif;
+	font-size:14px;
+	color:#aaa;
+	text-transform:uppercase;
+	text-decoration:none;
+	text-shadow:1px 1px 1px #000;
+	-moz-box-shadow:0px 0px 4px #000 inset;
+	-webkit-box-shadow:0px 0px 4px #000 inset;
+	box-shadow:0px 0px 4px #000 inset;
+}
+
+div.main div.displayroomtable{
+	vertical-align:bottom; 
+	padding:15px;
+}
+
+
+div.main div.displayroomtable table{
+	color:#222;
+	width:775px;
+	background:#AAA; 
+	margin-top:7px;
+	margin-right:25px;
+	-moz-box-shadow:0px 0px 4px #000 inset;
+	-webkit-box-shadow:0px 0px 4px #000 inset;
+	box-shadow:0px 0px 4px #000 inset;
+	border:1px solid #000;
+}
+div.main div.displayroomtable tr{
+	border:1px solid red;
+}
+
+div.main div.displayroomtable td.statusbutton-dimmer{
+	width:110px;
+}
+
+div.main div.displayroomtable td.statusbutton-dimmer div.slider{
+    border-width: 1px;  
+    border-style: solid;  
+    border-color: #333 #333 #777 #333;  
+    border-radius: 25px;  
+    width: 100px;  
+    #position: absolute;  
+    height: 13px;  
+    background-color: #8e8d8d;  
+    background: url('/images/media/bg-track.png') repeat top left;  
+    box-shadow: inset 0 1px 5px 0px rgba(0, 0, 0, .5),   
+                 0 1px 0 0px rgba(250, 250, 250, .5);  
+    left: 20px;  
+}

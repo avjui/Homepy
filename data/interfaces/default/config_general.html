@@ -1,0 +1,63 @@
+<%inherit file="base.html"/>
+
+<%!
+import core
+%>
+
+<%def name="body()">
+	<div class="config_sonos" align=center>
+	<link rel="stylesheet" href="css/config_general.css" type="text/css" media="screen"/>
+	<form action="saveGeneralConfig" >
+		<p>		 
+				<lable><h1><u>${title}</u></h1></lable>
+				<table cellpadding="5">
+					<tr>
+						<td>
+							<label><b>Homepy Host</b></label>
+							<br />
+							<input style="width:250px" type="text" name="http_host" id="cherrypyHost" value='${core.HTTP_HOST}' />
+
+						</td>
+						<td>
+							<label><b>Homepy Port</b></label>
+							<br />
+                					<input style="width:250px" type="text" name="http_port" id="cherrypyPort" value='${core.HTTP_PORT}' />
+						</td>
+					</tr>
+					<tr><td colspan="4"></td></tr>
+					<tr>
+						<td>
+							<label><b>Homepy Username</b></label>
+							<br />
+							<input style="width:250px" type="text" name="http_username" id="homepyUsername" value='${core.HTTP_USERNAME}' />
+						</td>
+
+						<td>
+							<label><b>Homepy Password</b></label>
+							<br />
+							<input style="width:250px" type="text" name="http_password" id="homepyPassword" value='${core.HTTP_PASSWORD}' />
+						</td>
+					</tr>
+					<tr><td colspan="4"></td></tr>
+					<tr>
+						<td>
+							<label><b>Webinterface Theme</b></label>
+							<br />
+							<select name="webinterface" id="webinterface" style="width:200px"><option>default</option></select>
+						</td>
+					</tr>
+					<tr><td colspan="4"></td></tr>
+					<tr>
+						<td>
+							<label><b>Debug Enable</b></label>
+							<br />
+							<input type="checkbox" name="debugEnabled" id="debugEnabled" value=""/>
+						</td>
+					</tr>
+					<tr><td colspan="4"></td></tr>
+				</table>
+			<p><input style="width:75px" type="submit" value="Save"></p>
+		</p>
+	</form>
+	</div>
+</%def>
