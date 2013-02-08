@@ -48,7 +48,7 @@ def start():
 		'/js':{
 			'tools.staticdir.on': True,
 			'tools.staticdir.dir': "interfaces/default/js"
-		}
+		},
 	}
     
 #	if core.HTTP_PASSWORD != "":

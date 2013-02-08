@@ -21,7 +21,18 @@ class HmXmlClasses():
 			return server
 
 		except xmlrpclib.Fault as err:
-			log (err.faultString, 'error'), 
+			log (err.faultString, 'error') 
+
+
+	def Init(self):
+		
+		try:
+			interface = self.ConectToServer().init('192.168.1.250:8990', '12345678')
+			return True
+
+		except xmlrpclib.Fault as err:
+			log (err.faultString, 'error')
+
 
 
 	def GetHMInterfaces(self, **kwargs):

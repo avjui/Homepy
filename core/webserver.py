@@ -14,7 +14,7 @@ from core.Config import Config
 # modules
 from core.module.sonos import Sonos
 from core.module.homematic.homematic import HmXmlClasses
-
+from core.module.homematic.homematicserver import Initial as HMServer
 
 
 def serve_template(templatename, **kwargs):
@@ -260,3 +260,12 @@ class WebInterface():
 		else:	
 			HmXmlClasses().setValueToHMDimmer(device_serial, value)
 			return 
+
+
+	@cherrypy.expose
+	def event(self,*args):
+	
+		print args
+		
+
+		

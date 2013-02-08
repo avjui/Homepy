@@ -2,7 +2,7 @@
 ######################
 *.log
 *.db
-data/cache/*
+data/cache/*.jpg
 config.ini
 
 #  Compiled source   #

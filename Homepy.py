@@ -20,7 +20,7 @@ from core.Config import Config
 from core.DBFunctions import DBFunction
 from core.DBFunctions import SonosDB
 from core.Logger import log
-
+#from core.module.homematic.homematicserver import Initial as HMServer
 
 # Fixed paths to Headphones
 if hasattr(sys, 'frozen'):
@@ -90,6 +90,9 @@ def main():
          DBFunction().CeckDatabase()
     except Exception, e:
          log(e,'error')
+
+    # Start XML_RPC server
+    #HMServer()
 
     core.base.start()
 
