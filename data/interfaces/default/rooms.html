@@ -1,0 +1,98 @@
+<%inherit file="base.html"/>
+<%!
+	from core.DBFunctions import DBFunction
+
+%>
+
+<%def name="body()">
+	%for room in roomlist:
+		<%
+		rname = room[1]
+		%>
+	<div class="displayroomtable" id="${rname}" >
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.21.custom.min.js" ></script> 
+	<link rel="stylesheet" href="css/rooms.css" type="text/css" media="screen"/>
+		<p>		 
+		<lable><h1><u>${rname}</u></h1></lable>
+		<%
+			list = DBFunction().GetDeviceList(rname)
+			print list
+		%>
+		%for device in list:
+			<%
+				dtype = device[0]
+				dname = device[1]
+				dserial = device[2]
+				dcserial = device[2].replace(':', '-')
+			%>
+		<table cellpadding="5">
+			<tbody align=center border="1">
+			  	<tr>
+					% if dtype == 'SWITCH':
+						<td style="width:550px" align=left>${dname}</td>
+						<td><img  id="lamp-${dcserial}" class="lamp-${dcserial}" src="images/lamps/off.png" /></td>
+						<td class="statusbutton" >
+							<img id="switch-${dcserial}" class="switch-${dcserial}" src="images/lamps/switch_on_litle.png" />
+						</td>
+						<script type="text/javascript">
+							$('#switch-${dcserial}').click(function(){
+								$.get("functionHomatic", { device_serial:"${dserial}", value : ""});
+									});
+									$(function(){
+										$(".switch-${dcserial}").live('click', function() {
+											if ($(this).attr("class") == "switch-${dcserial}") {
+												this.src = this.src.replace("off","on");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png');
+											} else {
+												this.src = this.src.replace("on","off");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png');
+												}
+											$(this).toggleClass("on");
+											});
+										});
+						</script>
+					% else:
+						<td style="width:4000px" align=left>${dname}</td>
+						<td class="statusbutton-dimmer" >
+							<div class="slider" id="${dcserial}"></div>
+						</td>
+						<td><img  id="lamp-${dcserial}" class="lamp-${dcserial}" src="images/lamps/off.png" /></td>
+						<td>
+							<img id="dimmer-${dcserial}" class="switch-${dcserial}" src="images/lamps/switch_on_litle.png" />
+						</td>
+
+
+					<script type="text/javascript">
+						var wert = "0.0";
+						$(function(){$("${dcserial}").slider();
+							});
+							$('#dimmer-${dcserial}').click(function(){
+									$(function(){
+										$(".switch-${dcserial}").click(function() {
+											if ($(this).attr("class") == "switch-${dcserial}") {
+												wert = "0.75";
+												this.src = this.src.replace("off","on");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png');
+												
+											} else {
+												wert = "0.0";
+												this.src = this.src.replace("on","off");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png');
+												
+												}
+											$(this).toggleClass("on");});
+									$.get("functionHomatic", { device_serial:"${dserial}:1", value : wert});
+											
+									});
+							});	
+					</script>
+					% endif
+				</tr>
+			</tbody>
+		</table>
+		%endfor
+		</p>
+	</div>
+	%endfor
+</%def>

@@ -1,0 +1,131 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+	<div class="config_hm_interface" align=center>
+	<link rel="stylesheet" href="css/config_homematic.css" type="text/css" media="screen"/>
+		<p>		 
+			<lable><h1><u>${title}</u></h1></lable>
+			<form action="addInterface">
+				<table cellpadding="5">
+					<caption><h2><u>Servers</u></h2></caption>
+					<tr>
+						<td>
+							<label><b>Interface Serial</b></label>
+							<br />
+							<input style="width:150px" type="text" name="interface_serial" id="interface_serial" value='' />
+						</td>
+						<td>
+							<label><b>Interface IP</b></label>
+							<br />
+							<input style="width:150px" type="text" name="interface_ip" id="interface_ip" value='' />
+						</td>						<td>
+							<label><b>Interface Name</b></label>
+							<br />
+							<input style="width:250px" type="text" name="interface_name" id="interface_name" value='' />
+						</td>
+						<td class="add_hm_interface" >
+							<input style="width:70px" type="submit" value="Add">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</p>
+	</div>
+	<div id="interfacetable" class="interfacetable">
+	<form action="removeInterface">
+		<p>
+		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
+					<thead>
+						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Action</th></tr>
+					</thead>
+					<tbody align=center>
+						%for key,value in interfacelist:
+							<%
+								iserial = key
+								iname = value
+							%>
+						<tr><td>${iserial}</td><td>${iname}</td><td>Wohnzimmer</td><td>LAN</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeInterface?interface_serial=${iserial}'" value="Remove"></td></tr>
+						%endfor
+					</tbody>
+			
+				</table>
+			<script type="text/javascript">
+				$("#sort tbody").sortable().disableSelection();
+				
+			</script>
+		</p>
+	</form>
+	</div>
+	<div class="config_hm_device" align=center>
+		<p>
+			<form action="addDevice">
+			<table cellpadding="5">
+				<caption><h2><u>Devices</u></h2></caption>
+					<tr>
+						<td>
+							<label><b>Device Serial</b></label>
+							<br />
+							<input style="width:150px" type="text" name="device_serial" id="device_serial" value='' />
+						</td>
+						<td>
+							<label><b>Device Name</b></label>
+							<br />
+							<input style="width:250px" type="text" name="device_name" id="device_name" value='' />
+						</td>
+						<td>
+							<label><b>Device Standort</b></label>
+							<br />
+							<select name="device_type" size="1" style="width:150px">
+								<option selected>--- Please choose a room ---</option>
+								<option>SWITCH</option>
+								<option>DIMMER</option>
+							</select>
+						</td>
+						<td>
+							<label><b>Device Standort</b></label>
+							<br />
+							<select name="device_room" size="1" style="width:200px">
+								<option selected>--- Please choose a room ---</option>
+								%for room in roomlist:
+									<%
+										rname = room[1]
+									%>
+									<option>${rname}</option>
+								%endfor
+							</select>
+						</td>
+						<td class="add_hm_device" >
+							<input style="width:70px" type="submit" value="Add">
+						</td>
+					</tr>
+			</table>
+			</form>
+		</p>
+	</div>
+	<div id="devicetable" class="devicetable">
+	<form action="removeDevice">
+		<p>
+		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
+					<thead>
+						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Action</th></tr>
+					</thead>
+					<tbody align=center>
+						%for device in devicelist:
+							<%	
+							dtype = device[0]
+							dname = device[1]
+							dserial = device[2]
+							droom = device[3]
+							%>
+								<tr><td>${dserial}</td><td>${dname}</td><td>${droom}</td><td>${dtype}</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeDevice?device_serial=${dserial}'" value="Remove"></td></tr>
+						%endfor
+					</tbody>
+				</table>
+			<script type="text/javascript">
+				$("#sort tbody").sortable().disableSelection();
+				
+			</script>
+		</p>
+	</form>
+	</div>
+</%def>
