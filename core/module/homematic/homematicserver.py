@@ -24,7 +24,7 @@ class EventServer():
 			return
 					
 					
-	def listDevices(self):
+	def listDevices(self, array):
 		device = ''
 		return device
 
