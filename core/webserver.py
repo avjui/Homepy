@@ -14,7 +14,7 @@ from core.Config import Config
 # modules
 from core.module.sonos import Sonos
 from core.module.homematic.homematic import HmXmlClasses
-from core.module.homematic.homematicserver import Initial as HMServer
+from core.module.homematic.homematicserver import EventServer
 
 
 def serve_template(templatename, **kwargs):

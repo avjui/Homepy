@@ -20,7 +20,8 @@ from core.Config import Config
 from core.DBFunctions import DBFunction
 from core.DBFunctions import SonosDB
 from core.Logger import log
-#from core.module.homematic.homematicserver import Initial as HMServer
+from core.module.homematic.homematicserver import EventServer
+from core.module.homematic.homematic import HmXmlClasses
 
 # Fixed paths to Headphones
 if hasattr(sys, 'frozen'):
@@ -91,8 +92,11 @@ def main():
     except Exception, e:
          log(e,'error')
 
-    # Start XML_RPC server
-    #HMServer()
+    # Start XML_RPC server and say we are here
+    Server_thread = threading.Thread(target=EventServer().start)
+    Server_thread.start()
+    HmXmlClasses().Init()
+    log('Homematic Event-Server was started', 'info')
 
     core.base.start()
 
