@@ -196,7 +196,7 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionSonos(self, zonen_ip='', function='', zone_name=''):
+	def functionSonos(self, zonen_ip='', function='', zone_name='', value=''):
 		self.data = []
 		db = DBFunctions.DBFunction		
 		if function == 'getcover':
@@ -215,7 +215,7 @@ class WebInterface():
 						return json.dumps(self.data)
 
 		else:
-			Sonos().SonosFunctions(zonen_ip, function)
+			Sonos().SonosFunctions(zonen_ip, function, value)
 			return 
 
 
@@ -261,11 +261,6 @@ class WebInterface():
 			HmXmlClasses().setValueToHMDimmer(device_serial, value)
 			return 
 
-
-	@cherrypy.expose
-	def event(self,*args):
-	
-		print args
 		
 
 		

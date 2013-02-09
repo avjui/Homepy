@@ -11,7 +11,7 @@
 		%>
 	<div class="displayroomtable" id="${rname}" >
 	<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
-	<script type="text/javascript"  src="js/jquery-ui-1.10.0.custom.js"></script> 
+	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="css/rooms.css" type="text/css" media="screen"/>
 		<p>		 
@@ -65,15 +65,20 @@
 
 					<script type="text/javascript">
 						var wert = "0.0";
+						var slidervalue = "7"
 						$(function(){
 								$("#${dcserial}").slider({
 											range:"min",
-											min:1,
-											value:35,
+											min:-1,
+											value: slidervalue,
+											max:10,
 											//Slider Event
 											slide: function(event, ui) { 
 											//When the slider is sliding
-											var value  = $("#${dcserial}").slider('value');
+											slidervalue  = ($("#${dcserial}").slider('value')/10);
+											},
+											change: function(event, ui) {
+											$.get("functionHomatic", { device_serial:"${dserial}:1", value : slidervalue});
 											},
 										});
 							});
@@ -95,6 +100,7 @@
 									$.get("functionHomatic", { device_serial:"${dserial}:1", value : wert});
 											
 									});
+							$("#${dcserial}").draggable(); //Add touch screen (i.e. iPad, iPhone, Android) support for the slider
 							});	
 					</script>
 					% endif

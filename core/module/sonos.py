@@ -69,12 +69,12 @@ class Sonos:
 		return art
 
 
-	def SonosFunctions(self, zonenip, function):
+	def SonosFunctions(self, zonenip, function, value=''):
 		
 		sonos = SoCo(zonenip)
 
 		func = getattr(sonos,function)
-		func()
+		func(value)
 		log('Function %s for %s IP', 'debug'), (function, zonenip) 
 
 		

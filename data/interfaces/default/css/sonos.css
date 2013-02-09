@@ -66,3 +66,44 @@ div.main div.sonos div.control{
 	z-index:10;
 
 }
+
+div.main div.sonos div.volume{
+	clear:both;
+	position:relative;
+	bottom:60px;
+       margin-left:25px;
+}
+
+div.main div.sonos div.volume div.slider{
+    border-width: 1px;  
+    border-style: solid;  
+    border-color: #333 #333 #777 #333;  
+    border-radius: 25px;  
+    width: 170px;  
+    position: absolute;  
+    height: 13px;  
+    background-color: #8e8d8d;  
+    background: url('/images/media/bg-track.png') repeat top left;  
+    box-shadow: inset 0 1px 5px 0px rgba(0, 0, 0, .5),   
+                 0 1px 0 0px rgba(250, 250, 250, .5);   
+}
+
+div.main div.sonos div.volume div.slider .ui-slider {
+	position: relative;
+	text-align: left;
+}
+
+div.main div.sonos div.volume div.slider .ui-slider-handle {
+	border: 0;
+
+	background: url('/images/media/handle.png') no-repeat 50% 50%;
+}
+
+div.main div.sonos div.volume div.slider .ui-slider-range {
+	background: #0B75AF; /* Old browsers */
+	position: absolute;
+	border: 0;
+	top: 0;
+	height: 110%;
+	border-radius: 25px;
+}

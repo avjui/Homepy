@@ -39,11 +39,9 @@
 				<img src=images/media/first.png id="fwd-${zonename}" height="32" width="32"/>
 				<img src=images/media/last.png id="rew-${zonename}" height="32" width="32"/>
 			</div>	
-			<div class="section">   
-				<span class="tooltip"></span>   
-				<div id="slider"></div>  
-				<span class="volume"></span>  
-			</div>  
+			<div class="volume" >
+				<div class="slider" id="volume-${coverid}"></div>
+			</div>
 			</td><td>
 			<table  class="info" align=left>
 					<caption><h2><u>${zonename}</u></h2></caption>
@@ -76,6 +74,24 @@
 					},
 					});
 			}, ${time});
+			
+			$(function(){
+					var slidervalue = "20"
+					$("#volume-${coverid}").slider({
+									range:"min",
+									min:-1,
+									value: slidervalue,
+									max:100,
+									//Slider Event
+									slide: function(event, ui) { 
+									//When the slider is sliding
+									slidervalue  = $("#volume-${coverid}").slider('value');
+										},
+									change: function(event, ui) {
+										$.get("functionSonos", { zonen_ip:"${zonenip}", function:"volume", value : slidervalue });
+										},
+								});
+					});			
 			});
 
 			// Send th action for the player	
