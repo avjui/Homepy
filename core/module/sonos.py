@@ -78,6 +78,6 @@ class Sonos:
 			func()
 		else:
 			func(value)
-		log('Function %s for %s IP', 'debug'), (function, zonenip) 
+		log('Function %s for %s IP'% (function, zonenip), 'debug')
 
 		

@@ -2,6 +2,10 @@ import socket
 from SimpleXMLRPCServer import SimpleXMLRPCServer as Server
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 
+# core 
+from core.DBFunctions import DBFunction
+from core.Logger import log
+
 
 class EventServer():
 
@@ -12,23 +16,27 @@ class EventServer():
 	def Event(self,*args):
 
 		i = iter(args)
-		serial = i.next()
+		eventid = i.next()
+		serial= i.next()
+		type = i.next()					
 		value = i.next()
-		state = i.next()					
 
-		if value == 'LEVEL':
-			print "Dimmer with the Serial : %s  switch to %s : %s"% (serial, value, state)
-		elif value == 'STATE':
-			print "Switch with the Serial : %s  switch to %s : %s"% (serial, value, state)
+		if type == 'LEVEL':
+			DBFunction().UpdateDevice(serial, type, value)
+			log('Dimmer with the Serial : %s  switch to %s : %s'% (serial, type, value), 'debug')
+		elif type == 'STATE':
+			DBFunction().UpdateDevice(serial, type, value)
+			log('Switch with the Serial : %s  switch to %s : %s'% (serial, type, value), 'debug')
 		else:
-			return
+			data = ''
+			return data
 					
 					
 	def listDevices(self, array):
 		device = ''
 		return device
 
-	def newDevices(self, array):
+	def newDevices(self, interface_id, description_array):
 		device = ''
 		return device
 		
@@ -45,8 +53,3 @@ class EventServer():
 
 		#Starting the Server
 		self.s.serve_forever()
-		
-
-	
-		
-

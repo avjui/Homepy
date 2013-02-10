@@ -74,5 +74,5 @@ def start():
 		cherrypy.server.wait()
 
 	except KeyboardInterrupt:
-
+		bus.exit()
 		sys.exit(0)

@@ -25,6 +25,7 @@
 				dname = device[1]
 				dserial = device[2]
 				dcserial = device[2].replace(':', '-')
+				dvalue = device[4]
 			%>
 		<table cellpadding="5">
 			<tbody align=center border="1">
@@ -65,12 +66,12 @@
 
 					<script type="text/javascript">
 						var wert = "0.0";
-						var slidervalue = "7"
+						var slidervalue = "${dvalue}"
 						$(function(){
 								$("#${dcserial}").slider({
 											range:"min",
 											min:-1,
-											value: slidervalue,
+											value: (slidervalue*10),
 											max:10,
 											//Slider Event
 											slide: function(event, ui) { 

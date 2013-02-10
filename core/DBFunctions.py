@@ -81,6 +81,7 @@ class DBFunction:
 
 		self.i = 0
 		roomID = int(self.getCountID('devices', 'OrderID' ))
+		value = 0
 
 		deviceName = deviceName.upper()
 		roomName = roomName.upper()
@@ -92,14 +93,15 @@ class DBFunction:
 				size = len(deviceSerial)
 				if size > 2:
 					self.i = self.i + 1
-					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName) VALUES(?,?,?,?,?)', (roomID, deviceType, deviceName + "(" + str(self.i) + ")", serial, roomName))
+					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (roomID, deviceType, deviceName + "(" + str(self.i) + ")", serial, roomName, '0.0'))
 					connection.commit()
 				else:
-					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName) VALUES(?,?,?,?,?)', (roomID, deviceType, deviceName, serial, roomName))
+					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (roomID, deviceType, deviceName, serial, roomName, '0.0'))
 					connection.commit()
 
 		cursor.close()
 		return True
+
 
 
 	def GetDeviceList(self, roomName=''):
@@ -108,16 +110,29 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		if roomName == '':
-			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName FROM devices ORDER BY OrderID"
+			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue FROM devices ORDER BY OrderID"
 			log(sql, 'debug')
 		else:
-			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName FROM devices WHERE RoomName='%s'"% (roomName)
+			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue FROM devices WHERE RoomName='%s'"% (roomName)
 			log(sql, 'debug')
 		
 		cursor.execute(sql)
 		result = cursor.fetchall()
 		cursor.close()
 	    	return result
+
+	def UpdateDevice(self, deviceSerial, ValueType, deviceValue):
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+
+		sql = "UPDATE devices SET ValueType='%s', DeviceValue='%s' WHERE DeviceSerial='%s'"% (ValueType, deviceValue, deviceSerial)
+
+		print sql
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+	    	return 
 
 
 
@@ -216,7 +231,7 @@ class DBFunction:
 		cursor.execute(sql)
 		connection.commit()
 		cursor.close()
-		log('Remove sonos device with %s Name from DB', 'info'), (sonosName)
+		log('Remove sonos device with %s Name from DB'% (sonosName), 'info')
 		return 	
 
 		
@@ -448,7 +463,7 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, DeviceValue TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')

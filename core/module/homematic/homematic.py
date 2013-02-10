@@ -63,7 +63,7 @@ class HmXmlClasses():
 	
 		try:
 			interface = self.ConectToServer().addDevice(serial)
-			log('The interface with the Serial: %s was added', 'info'), (serial)
+			log('The interface with the Serial: %s was added'%(serial), 'info')
 			return True
 
 		except xmlrpclib.Fault as err:
@@ -74,23 +74,22 @@ class HmXmlClasses():
 
 		try:
 			interface = self.ConectToServer().deleteDevice(serial)
-			log('The interface with the Serial: %s was deleted', 'info'), (serial)
+			log('The interface with the Serial: %s was deleted'%(serial), 'info')
 			sleep(3)
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultStringg
-	
+			log (err.faultString, 'error')	
 
 
 	def getHMDeviceDescription(self, serial):
 
 		try:
 			self.result = self.ConectToServer().getDeviceDescription(serial)
-			log('The interface with the Serial: %s was deleted', 'info'), (serial)
+			log('The interface with the Serial: %s was deleted'% (serial), 'info')
 			return self.result
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultStringg
+			log (err.faultStringg, 'error')
 
 
 	def getHMChildren(self, serial):
@@ -99,10 +98,10 @@ class HmXmlClasses():
 			self.description = self.getHMDeviceDescription(serial)
 			for key, values in self.description.items():
 				if key == 'CHILDREN':
-					#log(Function  [getHMChildren : + str(values) + ']', 'debug')
+					log('Function  [getHMChildren : ' + str(values) + ']', 'debug')
 					return values
 		except:
-			log ('Do not return CHILDREN', 'error')
+			log ('Function  [getHMChildren : ]Do not return CHILDREN', 'error')
 	
 
 	def getParamsetFromHMDevice(self, device):
@@ -112,7 +111,7 @@ class HmXmlClasses():
 			return Paramset
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultString
+			log (err.faultString, 'error')
 
 
 
@@ -122,10 +121,10 @@ class HmXmlClasses():
 			value = self.getParamsetFromHMDevice(device)
 			state = self.toggleSwitch(value)
 			interfaces = self.ConectToServer().setValue(device, 'STATE', state)
-			log('Set Switch to STATE %s"', 'debug'), (state)
+			log('Set Switch to STATE %s"'%(state), 'debug')
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultString
+			log (err.faultString, 'error')
 
 
 
@@ -133,11 +132,11 @@ class HmXmlClasses():
 
 		try:
 			interfaces = self.ConectToServer().setValue(device, 'LEVEL', level)
-			log('Set Device: %s to STATE %s' , 'debug'), (device, level)
+			log('Set Device: %s to STATE %s'% (device, level) , 'debug')
 
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultString
+			log (err.faultString, 'error')
 	
 
 
@@ -145,11 +144,10 @@ class HmXmlClasses():
 
 		try:
 			result = self.ConectToServer().gettValue(device, 'LEVEL')
-			log('Value for Device: %s is %s' , 'debug'), (device, result)
-
+			log('Value for Device: %s is %s'% (device, result), 'debug')
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultString
+			log (err.faultString, 'error'), err.faultString
 
 	
 
