@@ -5,11 +5,13 @@ from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 # core 
 from core.DBFunctions import DBFunction
 from core.Logger import log
+from core.Helper import get_local_ip
 
 
 class EventServer():
 
-	s = Server(('192.168.1.250', 8990), logRequests=False)
+	ip = get_local_ip()
+	s = Server((ip, 8990), logRequests=False)
 	
 	
 

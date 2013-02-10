@@ -128,7 +128,6 @@ class DBFunction:
 
 		sql = "UPDATE devices SET ValueType='%s', DeviceValue='%s' WHERE DeviceSerial='%s'"% (ValueType, deviceValue, deviceSerial)
 
-		print sql
 		cursor.execute(sql)
 		connection.commit()
 		cursor.close()
@@ -344,13 +343,11 @@ class DBFunction:
 
 		sql = "CREATE TABLE IF NOT EXISTS '%s' (OrderID INTEGER, SceneName TEXT, RoomName TEXT, DeviceName TEXT, SwitchValue INTEGER, DimmerValue FLOAT)"% (sceneName.upper()) 
 
-		print sql
 		cursor.execute(sql)
 		connection.commit()
 
 		sql = "INSERT INTO '%s' (SceneName) VALUES ('%s')"% (sceneName.upper(), sceneName.upper()) 
 
-		print sql
 		cursor.execute(sql)
 		connection.commit()
 
@@ -383,8 +380,7 @@ class DBFunction:
 		if scene_name == None:
 			for scene in self.GetScenes():		
 				sql = "SELECT SceneName, RoomName, DeviceName FROM '%s'" % (scene[1])
-
-				print sql				
+				
 				cursor.execute(sql)
 				result = cursor.fetchall()
 				self.data[scene[1]]= result
@@ -413,7 +409,6 @@ class DBFunction:
 		else:
 			sql = "DELETE FROM '%s' WHERE RoomName='%s'"% (sceneName, sceneRoom)
 
-		print sql
 		cursor.execute(sql)
 		connection.commit()
 		cursor.close()
@@ -434,7 +429,6 @@ class DBFunction:
 		else:
 			sql = "INSERT INTO '%s' (SceneName, RoomName) VALUES('%s','%s')"% (sceneName, sceneName, sceneRoom )
 
-		print sql
 		cursor.execute(sql)
 		connection.commit()
 		cursor.close()
