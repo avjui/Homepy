@@ -1,0 +1,71 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+	<div class="config_hm_interface" align=center>
+	<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+	<script type="text/javascript"  src="js/jquery-ui-1.10.0.custom.js"></script> 
+	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="css/config_cams.css" type="text/css" media="screen"/>
+		<p>		 
+			<lable><h1><u>${title}</u></h1></lable>
+			<form action="addCam">
+				<table cellpadding="5">
+					<tr>
+						<td>
+							<label><b>Cam adress</b></label>
+							<br />
+							<input style="width:300px text-transform:none;" type="text" name="cam_ip" id="cam_ip" value='' />
+						</td>
+						<td>
+							<label><b>Cam Name</b></label>
+							<br />
+							<input style="width:150px" type="text" name="cam_name" id="cam_name" value='' />
+						</td>						<td>
+							<label><b>Room Name (optional)</b></label>
+							<br />
+							<select name="room_name" size="1" style="width:200px">
+								<option selected>--- Please choose a room ---</option>
+								%for room in roomlist:
+									<%
+										rname = room[1]
+									%>
+									<option>${rname}</option>
+								%endfor
+							</select>
+						</td>
+						<td class="add_hm_interface" >
+							<input style="width:70px" type="submit" value="Add">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</p>
+	</div>
+	<div id="interfacetable" class="interfacetable">
+	<form action="removeCam">
+		<p>
+		<table id="interfacesort" class="grid" cellpadding="5" width=100% align=center >
+					<thead>
+						<tr><th style="width:100px;">Live</th><th style="width:300px;">Adress</th><th>Name</th><th>Room</th><th>Action</th></tr>
+					</thead>
+					<tbody align=center>
+						%for device in devicelist:
+							<%
+								cadress = device[0]
+								cname = device[1]
+								croom = device[2]
+								
+							%>
+						<tr><td></td><td style="text-transform: none;">${cadress}</td><td>${cname}</td><td>${croom}</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeCam?cam_ip=${cadress}'" value="Remove"></td></tr>
+						%endfor
+					</tbody>
+			
+				</table>
+			<script type="text/javascript">
+				$("#sort tbody").sortable().disableSelection();
+				
+			</script>
+		</p>
+	</form>
+	</div>
+</%def>

@@ -81,6 +81,14 @@ class WebInterface():
 
 
 	@cherrypy.expose
+	def config_cams(self):
+		db = DBFunctions.DBFunction
+		devicelist = DBFunctions.DBFunction().GetCamList()
+		roomlist = DBFunctions.DBFunction().GetRoomsList()
+		return serve_template(templatename="config_cams.html", title="Cams Config", devicelist=devicelist, roomlist=roomlist)
+
+
+	@cherrypy.expose
 	def config_general(self):
 		db = DBFunctions.DBFunction
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
@@ -196,7 +204,7 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionSonos(self, zonen_ip='', function='', zone_name='', value=''):
+	def functionSonos(self, zonen_ip='', function='', zone_name='', value='', current_title=''):
 		self.data = []
 		db = DBFunctions.DBFunction		
 		if function == 'getcover':
@@ -212,8 +220,13 @@ class WebInterface():
 						album = device[4]		
 						artist = device[5]
 						self.data = art, title, album, artist, zonenip
-						return json.dumps(self.data)
 
+						# Check if track was changed
+						if current_title != title : 
+							return json.dumps(self.data)
+						else:
+							return
+		
 		else:
 			Sonos().SonosFunctions(zonen_ip, function, value)
 			return 
@@ -262,5 +275,16 @@ class WebInterface():
 			return 
 
 		
+	@cherrypy.expose
+	def addCam(self, cam_ip, cam_name, room_name):
+		db = DBFunctions.DBFunction
+		DBFunctions.DBFunction().AddCam(cam_ip, cam_name, room_name)		
+		raise cherrypy.HTTPRedirect("config_cams")
 
+
+	@cherrypy.expose
+	def removeCam(self, cam_ip):	
+		db = DBFunctions.DBFunction
+		db().RemoveCam(cam_ip)
+		raise cherrypy.HTTPRedirect("config_cams")
 		

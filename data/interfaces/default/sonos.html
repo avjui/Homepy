@@ -57,24 +57,27 @@
 		<script type="text/javascript">
 			// Update the cover
 			$(document).ready(function() {
+				var title = $("#${coverid}-title").text()
 				window.setInterval(function(){
 				$.ajax({
 					type: 'POST',
 					dataType: 'json',
 					url: 'functionSonos',
-					data: 'zone_name=${zonename}&function=getcover',
+					data: 'zone_name=${zonename}&function=getcover&current_title='+$("#${coverid}-title").text(),
 					cache: true,
 					success: function(result) {
-						$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
-						$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
-						$('#${coverid}-title').text(result[1]);
-						$('#${coverid}-album').text(result[2]);
-						$('#${coverid}-artist').text(result[3]);
-
-					},
+						if (result == null) 
+							return
+						else{
+							$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
+							$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
+							$('#${coverid}-title').text(result[1]);
+							$('#${coverid}-album').text(result[2]);
+							$('#${coverid}-artist').text(result[3]);
+							}
+						},
 					});
 			}, ${time});
-			
 			$(function(){
 					var slidervalue = "20"
 					$("#volume-${coverid}").slider({
@@ -91,8 +94,25 @@
 										$.get("functionSonos", { zonen_ip:"${zonenip}", function:"volume", value : slidervalue });
 										},
 								});
-					});			
+					});
+
 			});
+					//slider test for touch from http://www.advitum.de/blog/2011/09/nutzeroberflachen-furs-ipad-jquery-ui-slider/
+					$("#volume-${coverid}.ui-slider-handle").bind("touchmove", function(event)
+						{
+							var e = event.originalEvent;
+
+							var left = $("#volume-${coverid}").offset().left;
+							var right = left + $("#volume-${coverid}").width();
+
+							var min = $("#volume-${coverid}").slider('option', 'min');
+							var max = $("#volume-${coverid}").slider('option', 'max');
+
+							var newvalue = min + (e.touches.item(0).clientX-left)/(right-left)*(max-min);
+
+							$('#volume-${coverid}').slider('value', newvalue);
+						});
+			
 
 			// Send th action for the player	
 			$('#play-${zonename}').click(function(){

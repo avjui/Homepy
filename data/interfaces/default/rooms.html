@@ -65,7 +65,6 @@
 
 
 					<script type="text/javascript">
-						var wert = "0.0";
 						var slidervalue = "${dvalue}"
 						$(function(){
 								$("#${dcserial}").slider({
@@ -80,29 +79,30 @@
 											},
 											change: function(event, ui) {
 											$.get("functionHomatic", { device_serial:"${dserial}:1", value : slidervalue});
+											if (slidervalue==0) {
+														$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_off_litle.png?'+ new Date().getTime())
+														//$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png?'+ new Date().getTime());	
+														}
+											else {
+												$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_on_litle.png?'+ new Date().getTime())
+												//$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png?'+ new Date().getTime());	
+												}
 											},
 										});
 							});
 							$('#dimmer-${dcserial}').click(function(){
-									$(function(){
-										$(".switch-${dcserial}").click(function() {
-											if ($(this).attr("class") == "switch-${dcserial}") {
-												wert = "0.75";
-												this.src = this.src.replace("off","on");
-												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png');
-												
+											if ($("#dimmer-${dcserial}").attr("src") == 'images/lamps/switch_off_litle.png') {
+												//$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_on_litle.png?'+ new Date().getTime())
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png');	
 											} else {
-												wert = "0.0";
-												this.src = this.src.replace("on","off");
+												//$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_off_litle.png?'+ new Date().getTime())
 												$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png');
-												
+												//$('#${dcserial}').val(0);
+												//$('#${dcserial}').slider( "option", "values", 0);
 												}
-											$(this).toggleClass("on");});
-									$.get("functionHomatic", { device_serial:"${dserial}:1", value : wert});
+									$.get("functionHomatic", { device_serial:"${dserial}", value : slidervalue});
 											
 									});
-							$("#${dcserial}").draggable(); //Add touch screen (i.e. iPad, iPhone, Android) support for the slider
-							});	
 					</script>
 					% endif
 				</tr>

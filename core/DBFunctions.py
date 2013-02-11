@@ -450,6 +450,53 @@ class DBFunction:
 		cursor.close()
 		return 	
 
+	def AddCam(self, camIP, camName, roomName):
+
+		camIP = camIP
+		camName = camName.upper()
+		roomName = roomName.upper()
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+
+		sql = "INSERT INTO cams (CamIP, CamName, CamRoom) VALUES('%s','%s', '%s')"% (camIP, camName, roomName)
+		
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+		return 
+
+
+	def GetCamList(self):
+		
+		result = []
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+		try:
+			sql = "SELECT CamIP, CamName, CamRoom FROM cams ORDER BY OrderID"
+	
+			cursor.execute(sql)
+			result = cursor.fetchall()
+			cursor.close()
+
+		except Exception,e:
+			log(e, 'error')
+
+	    	return result	
+
+
+	def RemoveCam(self, camIP):
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+
+		sql = "DELETE FROM cams WHERE CamIP = '" + camIP + "'"
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+		return 	
+
 
 	def CeckDatabase(self):
 
@@ -457,12 +504,12 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, DeviceValue TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS sonos (OrderID INTEGER, SonosIP TEXT, SonosName TEXT, SonosRoom TEXT) ')
-
+		cursor.execute('CREATE TABLE IF NOT EXISTS cams (OrderID INTEGER, CamIP TEXT, CamName TEXT, CamRoom TEXT) ')
 		connection.commit()
 		cursor.close()
 		log("Checking DB", 'info')

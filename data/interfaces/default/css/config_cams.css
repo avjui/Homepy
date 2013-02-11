@@ -1,0 +1,44 @@
+div.main {
+	background:#444;
+	position:absolute;
+	top:300;
+	left:120;
+	width:auto;
+	padding-left:30px;
+	padding-right:30px;
+	margin-left:25px;
+	font-family:"Myriad Pro", "Trebuchet MS", sans-serif;
+	font-size:14px;
+	color:#aaa;
+	text-transform:uppercase;
+	text-decoration:none;
+	text-shadow:1px 1px 1px #000;
+	-moz-box-shadow:0px 0px 4px #000 inset;
+	-webkit-box-shadow:0px 0px 4px #000 inset;
+	box-shadow:0px 0px 4px #000 inset;
+}
+
+div.main div.config_hm_interface td.add_hm_interface{
+	vertical-align:bottom; 
+}
+
+div.main div.interfacetable{
+	padding:15px;
+	color:#222;
+}
+div.main div.interfacetable table{
+	#border:1px solid grey;
+	background:#AAA; 
+	-moz-box-shadow:0px 0px 4px #000 inset;
+	-webkit-box-shadow:0px 0px 4px #000 inset;
+	box-shadow:0px 0px 4px #000 inset;
+}
+div.main div.interfacetable th{
+	background-color:#0B75AF;
+	color:white;
+	border:1px solid grey;
+}
+div.main div.interfacetable td{
+	color:#0A0;
+	text-shadow:1px 1px 1px #0D0;	
+}

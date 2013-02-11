@@ -93,11 +93,14 @@ def main():
          log(e,'error')
 
     # Start XML_RPC server and say we are here
-    Server_thread = threading.Thread(target=EventServer().start)
-    Server_thread.start()
-    HmXmlClasses().Init()
-    log('Homematic Event-Server was started', 'info')
-
+    try:
+         Server_thread = threading.Thread(target=EventServer().start)
+         Server_thread.start()
+         HmXmlClasses().Init()
+         log('Homematic was connected with BidCos service', 'info')
+    except Exception, e:
+         log(e,'error')
+         
     core.base.start()
 
 

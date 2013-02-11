@@ -10,9 +10,9 @@ from core.Helper import get_local_ip
 
 class EventServer():
 
+
 	ip = get_local_ip()
 	s = Server((ip, 8990), logRequests=False)
-	
 	
 
 	def Event(self,*args):
@@ -44,14 +44,19 @@ class EventServer():
 		
 	
 	def start(self):
-
-		self.s.register_function(self.Event, 'event')
-		self.s.register_function(self.listDevices, 'listDevices')
-		self.s.register_function(self.newDevices, 'newDevices')
+		try:
+			self.s.register_function(self.Event, 'event')
+			self.s.register_function(self.listDevices, 'listDevices')
+			self.s.register_function(self.newDevices, 'newDevices')
 	
-		self.s.register_introspection_functions()
+			self.s.register_introspection_functions()
 
-		self.s.register_multicall_functions()
-
-		#Starting the Server
-		self.s.serve_forever()
+			self.s.register_multicall_functions()
+	
+			#Starting the Server
+			log('Starting EventServer' , 'info')
+			self.s.serve_forever()
+			
+		except:
+			log('EventServer do not start', 'error')
+			return

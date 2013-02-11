@@ -24,7 +24,7 @@ Current Features are:
 
 ***Dependencies***
 
-Homepy requires Python and CherryPY. The CherryPy module is included with Homepy. Python 2.7 or higher must be installed on the system on which Gamez will be ran.
+Homepy requires Python and CherryPY. The CherryPy module is included with Homepy. Python 2.7 or higher must be installed on the system on which Homepy will be run.
 
 You also need sqlite3 and Requests
 
