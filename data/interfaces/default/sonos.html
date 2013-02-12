@@ -4,8 +4,9 @@
 <%
 	i=0
 %>
-	<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
-	<script type="text/javascript"  src="js/jquery-ui-1.10.0.custom.js"></script> 
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
+	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
 			%for key,devices in trackinfolist.iteritems():
@@ -97,22 +98,6 @@
 					});
 
 			});
-					//slider test for touch from http://www.advitum.de/blog/2011/09/nutzeroberflachen-furs-ipad-jquery-ui-slider/
-					$("#volume-${coverid}.ui-slider-handle").bind("touchmove", function(event)
-						{
-							var e = event.originalEvent;
-
-							var left = $("#volume-${coverid}").offset().left;
-							var right = left + $("#volume-${coverid}").width();
-
-							var min = $("#volume-${coverid}").slider('option', 'min');
-							var max = $("#volume-${coverid}").slider('option', 'max');
-
-							var newvalue = min + (e.touches.item(0).clientX-left)/(right-left)*(max-min);
-
-							$('#volume-${coverid}').slider('value', newvalue);
-						});
-			
 
 			// Send th action for the player	
 			$('#play-${zonename}').click(function(){
