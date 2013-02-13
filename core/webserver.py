@@ -12,7 +12,7 @@ import core.DBFunctions as DBFunctions
 from core.DBFunctions import SonosDB
 from core.Config import Config
 # modules
-from core.module.sonos import Sonos
+from core.module.sonos.sonos import Sonos
 from core.module.homematic.homematic import HmXmlClasses
 from core.module.homematic.homematicserver import EventServer
 
@@ -141,7 +141,7 @@ class WebInterface():
 	def removeDevice(self, device_serial):
 		db = DBFunctions.DBFunction
 
-		#HmXmlClasses().deleteHMDevice(device_serial)
+		HmXmlClasses().deleteHMDevice(device_serial)
 		DBFunctions.DBFunction().RemoveDevice(device_serial)
 
 		raise cherrypy.HTTPRedirect("config_homematic")

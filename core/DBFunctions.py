@@ -5,7 +5,7 @@ import json
 import time
 
 import core
-from core.module.sonos import Sonos
+from core.module.sonos.sonos import Sonos
 from core.Logger import log
 from core.Helper import Replacesq
 
