@@ -580,7 +580,7 @@ class SoCo(object):
         """
         response = self.__send_command(TRANSPORT_ENDPOINT, GET_CUR_TRACK_ACTION, GET_CUR_TRACK_BODY)
 
-        dom = XML.fromstring(response)
+        dom = XML.fromstring(response.encode('utf-8'))
 
         track = {}
 
