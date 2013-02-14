@@ -115,29 +115,19 @@ class HmXmlClasses():
 
 
 
-	def setValueToHMSwitch(self, device):
+	def setValueToHMDevice(self, devcicetype, device, value=''):
 
 		try:
-			value = self.getParamsetFromHMDevice(device)
-			state = self.toggleSwitch(value)
-			interfaces = self.ConectToServer().setValue(device, 'STATE', state)
-			log('Set Switch to STATE %s"'%(state), 'debug')
+			if value == '':
+				value = self.getParamsetFromHMDevice(device)
+				value = self.toggleSwitch(value)
+
+			interfaces = self.ConectToServer().setValue(device, devicetype, value)
+			log('Set Device with serial :%s to %s : %s"'%(device, devicetype, value), 'debug')
 
 		except xmlrpclib.Fault as err:
 			log (err.faultString, 'error')
 
-
-
-	def setValueToHMDimmer(self, device, level):
-
-		try:
-			interfaces = self.ConectToServer().setValue(device, 'LEVEL', level)
-			log('Set Device: %s to STATE %s'% (device, level) , 'debug')
-
-
-		except xmlrpclib.Fault as err:
-			log (err.faultString, 'error')
-	
 
 
 	def getValueFromHMDimmer(self, device):
@@ -160,4 +150,24 @@ class HmXmlClasses():
 				else:
 					return True
 
+	def Multicall(slef, methoddic):
 
+		""" 
+		This function send a multicall request to server.
+		The methoddic specificate must be a dictionary. The key is the methodecall
+		and the value must be a list for the arguments for the call.
+		"""
+
+
+		self.multicall = xmlrpclib.MultiCall(self.ConectToServer)
+		
+		for methode, values in methoddic:
+
+			self.call = getattr(self.multicall, methode)
+			sel.call(values)
+			log('[ HomeMatic Multicall ] The  %s multicall function send %s arguments'% (methode, values), 'debug')
+
+		self.multicall()
+		return
+
+		

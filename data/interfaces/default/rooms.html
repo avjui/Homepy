@@ -38,8 +38,16 @@
 							<img id="switch-${dcserial}" class="switch-${dcserial}" src="images/lamps/switch_on_litle.png" />
 						</td>
 						<script type="text/javascript">
+
+							if ( "${dvalue}" == 'True') {
+								$('#switch-${dcserial}').attr('src', 'images/lamps/switch_on_litle.png?'+ new Date().getTime())
+								$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png?'+ new Date().getTime());									
+							} else {
+								$('#switch-${dcserial}').attr('src', 'images/lamps/switch_off_litle.png?'+ new Date().getTime())
+								$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png?'+ new Date().getTime());	
+							}								
 							$('#switch-${dcserial}').click(function(){
-								$.get("functionHomatic", { device_serial:"${dserial}", value : ""});
+								$.get("functionHomatic", { device_serial:"${dserial}", type:"${dtype}" });
 									});
 									$(function(){
 										$(".switch-${dcserial}").live('click', function() {
@@ -79,14 +87,14 @@
 											slidervalue  = ($("#${dcserial}").slider('value')/10);
 											},
 											change: function(event, ui) {
-											$.get("functionHomatic", { device_serial:"${dserial}:1", value : slidervalue});
+											$.get("functionHomatic", { device_serial:"${dserial}:1", type:"${dtype}", value : slidervalue});
 											if (slidervalue==0) {
 														$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_off_litle.png?'+ new Date().getTime())
-														//$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png?'+ new Date().getTime());	
+														$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png?'+ new Date().getTime());	
 														}
 											else {
 												$('#dimmer-${dcserial}').attr('src', 'images/lamps/switch_on_litle.png?'+ new Date().getTime())
-												//$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png?'+ new Date().getTime());	
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png?'+ new Date().getTime());	
 												}
 											},
 										});

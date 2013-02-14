@@ -76,8 +76,10 @@ class WebInterface():
 		db = DBFunctions.DBFunction
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
 		scenelist = DBFunctions.DBFunction().GetSceneElements(None)
+		sonoslist = DBFunctions.DBFunction().GetSonosList()
+		camslist = DBFunctions.DBFunction().GetCamList()
 		devicelist = DBFunctions.DBFunction().GetDeviceList()
-		return serve_template(templatename="config_rooms.html", title="Rooms Config", roomlist=roomlist, scenelist=scenelist, devicelist=devicelist)
+		return serve_template(templatename="config_rooms.html", title="Rooms Config", roomlist=roomlist, scenelist=scenelist, devicelist=devicelist, sonoslist=sonoslist, camslist=camslist)
 
 
 	@cherrypy.expose
@@ -265,14 +267,9 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionHomatic(self, device_serial, value='', type='' ):
-
-		if value == '':
-			HmXmlClasses().setValueToHMSwitch(device_serial)
-			return
-		else:	
-			HmXmlClasses().setValueToHMDimmer(device_serial, value)
-			return 
+	def functionHomatic(self, device_serial, type , value=''):
+		HmXmlClasses().setValueToHMDevice(device_serial, type, value)
+		return
 
 		
 	@cherrypy.expose

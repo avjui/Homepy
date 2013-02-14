@@ -126,14 +126,32 @@
 							</select>
 							</td>
 							<td>
-							<select name="scene_device" size="1" style="width:175px">
+							<select id ="deviceselect" name="scene_device" size="1" style="width:175px;">
 								<option selected>--- Please choose a device ---</option>
-								%for device in devicelist:
-									<%	
-									dname = device[1]
-									%>
-									<option>${dname}</option>
-								%endfor
+									<optgroup label="Homematic Devices" id="device">
+									%for device in devicelist:
+										<%	
+										dname = device[1]
+										%>
+										<option>${dname}</option>
+									%endfor
+									</optgroup>
+									<optgroup label="Sonos Devices" id="sonos">
+									%for sonos in sonoslist:
+										<%	
+										sname = sonos[1]
+										%>
+										<option>${sname}</option>
+									%endfor
+									</optgroup>
+									<optgroup label="Cam Devices" id="cams">
+									%for cam in camslist:
+										<%	
+										cname = cam[1]
+										%>
+										<option>${cname}</option>
+									%endfor
+									</optgroup>
 							</select>
 							</td>
 							<td class="add_room" >
