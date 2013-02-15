@@ -62,17 +62,14 @@ def start():
 
 	# Prevent time-outs
 	cherrypy.engine.timeout_monitor.unsubscribe()
-	
+		
 	cherrypy.tree.mount(WebInterface(), config = conf)
-	#daemon = Daemonizer(cherrypy.engine)
-	#daemon.subscribe()
+	if core.PROG_DAEMONIZE:
+		daemon = Daemonizer(cherrypy.engine)
+		daemon.subscribe()
 
-	try:
-		#cherrypy.process.servers.check_port(core.HTTP_HOST, core.HTTP_PORT)
-		cherrypy.engine.start()
-		cherrypy.engine.block
-		cherrypy.server.wait()
 
-	except KeyboardInterrupt:
-		bus.exit()
-		sys.exit(0)
+	#cherrypy.process.servers.check_port(core.HTTP_HOST, core.HTTP_PORT)
+	cherrypy.engine.start()
+	cherrypy.engine.block
+	cherrypy.server.wait()

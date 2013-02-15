@@ -267,8 +267,8 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionHomatic(self, device_serial, type , value=''):
-		HmXmlClasses().setValueToHMDevice(device_serial, type, value)
+	def functionHomatic(self, device_serial, device_type , value=''):
+		HmXmlClasses().setValueToHMDevice(device_type, device_serial, value)
 		return
 
 		

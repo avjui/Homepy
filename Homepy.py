@@ -7,13 +7,17 @@ import sys
 import locale
 import time
 import threading
-
 from optparse import OptionParser
 
+#cherrypy
 import cherrypy
 from cherrypy import server
+from cherrypy.process.plugins import PIDFile
+
+#libs
 from lib.configobj import ConfigObj
 
+#core
 import core
 import core.base 
 from core.Config import Config
@@ -92,21 +96,20 @@ def main():
     except Exception, e:
          log(e,'error')
 
-    # Start XML_RPC server and say we are here
+    # Gogogo
+
     try:
          Server_thread = threading.Thread(target=EventServer().start)
          Server_thread.start()
          HmXmlClasses().Init()
          log('Homematic was connected with BidCos service', 'info')
-    except Exception, e:
-         log(e,'error')
-         
-    core.base.start()
+         core.base.start()
+         while True: time.sleep(100)
 
-
-def BackgroundScan():
-
-    SonosDB().UpdateSonosTable()
+    except KeyboardInterrupt:
+         log('Homepy is shutting down ....', 'info')
+         cherrypy.engine.exit()
+         os._exit(0)
     
 
 

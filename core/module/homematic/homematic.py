@@ -115,7 +115,7 @@ class HmXmlClasses():
 
 
 
-	def setValueToHMDevice(self, devcicetype, device, value=''):
+	def setValueToHMDevice(self, devicetype, device, value=''):
 
 		try:
 			if value == '':
