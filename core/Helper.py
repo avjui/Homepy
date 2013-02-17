@@ -28,3 +28,25 @@ def get_local_ip():
             del s
 
         return ip
+
+
+def ParseTyps(deviceSerial, description):
+
+	data = {}
+	serial = ''
+
+	for items in description:
+		for key, values in items.iteritems(): 
+			if key == 'INDEX' and values == 1:
+				for key, values in items.items():
+					if key == 'PARENT':
+						serial = values
+					if key == 'PARENT_TYPE':
+						name = values
+					if key == 'TYPE':	
+						type = values
+
+					if serial == deviceSerial:
+						data[deviceSerial] = name, type			
+
+	return data

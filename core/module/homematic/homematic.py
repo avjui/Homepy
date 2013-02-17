@@ -35,29 +35,21 @@ class HmXmlClasses():
 
 
 
-	def GetHMInterfaces(self, **kwargs):
+	def GetHmDescription(self):
 
-		""" Return the adress of interfaces
-
-		You can also specification witch Interface this function should return
+		""" Return information of all devices witch are added
+		to the HomeMatic interface. 	
 
 		"""
 
-		interfaces = self.ConectToServer().listDevices('IEQ0004676')
-	
-		description = ''
-		address = ''
-		subaddress = ''
-		#values = interfaces
-		values = re.split("]}, {" ,str(interfaces))
-		#print values
-		for value in values:
-			if 'TYP' in value:
-				description = value
-			if 'ADDRESS' in value and 'IEQ' in value:
-				subaddress = subaddress + value		
-			
+		try:
+			interfaces = self.ConectToServer().listDevices()
+			return interfaces					
 
+		except xmlrpclib.Fault as err:
+			log ('%s', 'error'), err.faultString
+
+			
 
 	def addHMDevice(self, serial):
 	
@@ -104,11 +96,16 @@ class HmXmlClasses():
 			log ('Function  [getHMChildren : ]Do not return CHILDREN', 'error')
 	
 
-	def getParamsetFromHMDevice(self, device):
+	def getParamsetFromHMDevice(self, devices):
 
 		try:
-			Paramset = self.ConectToServer().getParamset(device, 'VALUES')
-			return Paramset
+			self.Paramsets = []
+
+			for device in devices:
+				self.Paramset = self.ConectToServer().getParamset(device, 'VALUES')
+				self.Paramsets.append(self.Paramset)
+
+			return self.Paramsets
 
 		except xmlrpclib.Fault as err:
 			log (err.faultString, 'error')

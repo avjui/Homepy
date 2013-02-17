@@ -8,6 +8,7 @@ from mako.lookup import TemplateLookup
 from mako import exceptions
 
 import core
+from core.Helper import ParseTyps
 import core.DBFunctions as DBFunctions
 from core.DBFunctions import SonosDB
 from core.Config import Config
@@ -131,10 +132,20 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def addDevice(self, device_serial, device_name, device_type, device_room):
+	def addDevice(self, device_serial, device_name, device_room):
 		db = DBFunctions.DBFunction
 		if HmXmlClasses().addHMDevice(device_serial):
+
+			# get the childdevices
 			device_children = HmXmlClasses().getHMChildren(device_serial)
+
+			# Parsing type
+			description = HmXmlClasses().GetHmDescription()
+			data = ParseTyps(device_serial, description)
+			for key, value in data.items():
+				device_type = value[1]
+
+			#HmXmlClasses().getParamsetFromHMDevice(device_children)
 			DBFunctions.DBFunction().AddDevice(device_children, device_name, device_type, device_room)		
 		raise cherrypy.HTTPRedirect("config_homematic")
 

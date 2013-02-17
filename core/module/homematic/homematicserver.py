@@ -25,7 +25,7 @@ class EventServer():
 		serial= i.next()
 		type = i.next()					
 		value = i.next()
-
+		#print args
 		if type in validtyps:
 			DBFunction().UpdateDevice(serial, type, value)
 			log('Device with the Serial : %s  switch to %s : %s'% (serial, type, value), 'debug')
@@ -36,7 +36,7 @@ class EventServer():
 					
 	def listDevices(self, array):
 		device = ''
-		print array
+		#print array
 		return device
 
 	def newDevices(self, interface_id, description_array):
