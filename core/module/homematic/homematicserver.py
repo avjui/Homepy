@@ -15,8 +15,8 @@ class EventServer():
 	s = Server((ip, 8990), logRequests=False)
 
 	#Set HomeMatic ValuesTypes
-	validtyps = ['SWITCH', 'DIMMER', 'CLIMATECONTROL_REGULATOR', 'HUMIDITY', 'TEMPERATURE', 'KEY', 'KEYMATIC']
-
+	validevicetyps = ['SWITCH', 'DIMMER', 'CLIMATECONTROL_REGULATOR', 'HUMIDITY', 'TEMPERATURE', 'KEY', 'KEYMATIC']
+	validdatatyps = ['STATE', 'LEVEL']
 
 	def Event(self,*args):
 
@@ -26,7 +26,7 @@ class EventServer():
 		type = i.next()					
 		value = i.next()
 		#print args
-		if type in validtyps:
+		if type in validdatatyps:
 			DBFunction().UpdateDevice(serial, type, value)
 			log('Device with the Serial : %s  switch to %s : %s'% (serial, type, value), 'debug')
 		else:

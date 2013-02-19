@@ -141,11 +141,11 @@ class WebInterface():
 
 			# Parsing type
 			description = HmXmlClasses().GetHmDescription()
-			data = ParseTyps(device_serial, description)
-			for key, value in data.items():
+			self.data = ParseTyps(device_serial, description)
+			for key, value in self.data.items():
 				device_type = value[1]
 
-			#HmXmlClasses().getParamsetFromHMDevice(device_children)
+			self.data = HmXmlClasses().getParamsetFromHMDevice(device_children)
 			DBFunctions.DBFunction().AddDevice(device_children, device_name, device_type, device_room)		
 		raise cherrypy.HTTPRedirect("config_homematic")
 
