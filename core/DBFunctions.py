@@ -504,7 +504,7 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ,ValueType TEXT, DeviceValue TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')
