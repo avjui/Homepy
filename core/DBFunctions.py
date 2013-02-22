@@ -24,14 +24,13 @@ class DBFunction:
 		else:
 			sql = "SELECT count('" + indicatorName + "') FROM '" + tableName + "'"
 		
-		print(sql) 
 		cursor.execute(sql)
 		connection.commit()
 		result = cursor.fetchall()    
-		recordCount = result[0][0]
+		self.recordCount = result[0][0]
 		cursor.close()
-		return recordCount
-	
+		return self.recordCount
+
 	
 	def AddInterface(self, interfaceID, interfaceSerial, interfaceIP, interfaceName):
 
@@ -106,9 +105,10 @@ class DBFunction:
 
 	def GetDeviceList(self, roomName=''):
 
+
 		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
-
+	
 		if roomName == '':
 			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue FROM devices ORDER BY OrderID"
 			log(sql, 'debug')
@@ -117,9 +117,10 @@ class DBFunction:
 			log(sql, 'debug')
 		
 		cursor.execute(sql)
-		result = cursor.fetchall()
+		self.result = cursor.fetchall()
 		cursor.close()
-	    	return result
+	    	return self.result
+
 
 	def UpdateDevice(self, deviceSerial, ValueType, deviceValue):
 
@@ -127,7 +128,7 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		sql = "UPDATE devices SET ValueType='%s', DeviceValue='%s' WHERE DeviceSerial='%s'"% (ValueType, deviceValue, deviceSerial)
-
+		print sql
 		cursor.execute(sql)
 		connection.commit()
 		cursor.close()
@@ -358,15 +359,20 @@ class DBFunction:
 
 	def GetScenes(self):
 
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
+		self.result = ''
 
-		sql = "SELECT OrderID, SceneName FROM scenes"
+		try:
+			connection = sqlite3.connect(core.DB_FILE, timeout=20)
+			cursor = connection.cursor()
 
-		cursor.execute(sql)
-		result = cursor.fetchall()
-		cursor.close()
-	    	return result
+			sql = "SELECT OrderID, SceneName FROM scenes"
+
+			cursor.execute(sql)
+			self.result = cursor.fetchall()
+			cursor.close()
+	    		return self.result
+		except:
+			return self.result
 
 
 	def GetSceneElements(self, scene_name):
@@ -504,7 +510,7 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ,ValueType TEXT, DeviceValue TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')
