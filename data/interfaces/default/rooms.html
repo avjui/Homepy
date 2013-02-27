@@ -5,6 +5,17 @@
 %>
 
 <%def name="body()">
+	<div class="container" id="container">     
+	<ul class="tabs">
+		<li class="active"><a href="#all">All Rooms</a></li>
+	%for room in roomlist:
+		<%
+		rname = room[1]
+		%>
+		<li><a href="#${rname}" >${rname}</a></li>
+	%endfor
+        </ul>
+	<div>
 	%for room in roomlist:
 		<%
 		rname = room[1]
@@ -121,4 +132,9 @@
 		</p>
 	</div>
 	%endfor
+	<script>
+		$(function(){
+			$("container").tabs();
+		});
+	</script>
 </%def>
