@@ -59,8 +59,7 @@ class HmXmlClasses():
 			return True
 
 		except xmlrpclib.Fault as err:
-			log ('%s', 'error'), err.faultString
-
+			log (err.faultString, 'error')
 
 	def deleteHMDevice(self, serial):
 

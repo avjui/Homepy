@@ -41,6 +41,7 @@ class Sonos:
 
 
 				self.album_art_url = self.track['album_art'].encode('utf-8')
+				log('Album cover : %s' % self.album_art_url, 'debug')
 				try:
 					self.album_artist = self.track['artist'].encode('utf-8')
 				except:

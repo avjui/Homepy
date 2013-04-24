@@ -79,7 +79,7 @@ class DBFunction:
 		return self.result
 
 
-	def AddDevice(self, deviceSerial, deviceName, deviceType, roomName, companyName):
+	def AddDevice(self, deviceSerial, deviceName, deviceType, roomName, companyName='', hidden=1):
 
 		self.i = 0
 		self.deviceType = deviceType
@@ -98,10 +98,10 @@ class DBFunction:
 				self.size = len(self.deviceSerial)
 				if self.size > 2:
 					self.i = self.i + 1
-					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName + "(" + str(self.i) + ")", self.serial, self.roomName, '0.0'))
+					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName + "(" + str(self.i) + ")", self.serial, self.roomName, '0.0', hidden))
 					self.connection.commit()
 				else:
-					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName, self.serial, self.roomName, '0.0'))
+					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName, self.serial, self.roomName, '0.0', hidden))
 					self.connection.commit()
 
 		self.cursor.close()
@@ -516,7 +516,7 @@ class DBFunction:
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')

@@ -100,9 +100,9 @@
 	<div id="devicetable" class="devicetable">
 	<form action="removeDevice">
 		<p>
-		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
+		<table id="interfacesort" class="grid" cellpadding="5" width=100% align=center >
 					<thead>
-						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Action</th></tr>
+						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Hidden</th><th>Remove</th><th>Update</th></tr>
 					</thead>
 					<tbody align=center>
 						%for device in devicelist:
@@ -112,7 +112,15 @@
 							dserial = device[2]
 							droom = device[3]
 							%>
-								<tr><td>${dserial}</td><td>${dname}</td><td>${droom}</td><td>${dtype}</td><td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeDevice?device_serial=${dserial}'" value="Remove"></td></tr>
+								<tr><td>${dserial}</td>
+								    <td>${dname}</td>
+								    <td>${droom}</td>
+								    <td>${dtype}</td>
+								    <td><select name="device_room" size="1" style="width:40px">
+									<option selected>ja</option>
+									<option>nein</option></td>
+								    <td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href='removeDevice?device_serial=${dserial}'" value="Remove"></td>
+								    <td class="add_hm_interface" ><input style="width:70px" type="button" onclick="location.href=''" value="Upate"></td></tr>
 						%endfor
 					</tbody>
 				</table>

@@ -12,6 +12,8 @@ from core.Helper import ParseTyps
 import core.DBFunctions as DBFunctions
 from core.DBFunctions import SonosDB
 from core.Config import Config
+from core.Logger import log
+
 # modules
 from core.module.sonos.sonos import Sonos
 from core.module.homematic.homematic import HmXmlClasses
@@ -135,10 +137,10 @@ class WebInterface():
 	def addDevice(self, device_serial, device_name, device_room):
 		db = DBFunctions.DBFunction
 		if HmXmlClasses().addHMDevice(device_serial):
-
+			log('Device found with %s Serial'% device_serial, 'debug')
 			# get the childdevices
 			device_children = HmXmlClasses().getHMChildren(device_serial)
-
+		
 			# Parsing type
 			description = HmXmlClasses().GetHmDescription()
 			self.data = ParseTyps(device_serial, description)
@@ -146,7 +148,9 @@ class WebInterface():
 				device_type = value[1]
 
 			self.data = HmXmlClasses().getParamsetFromHMDevice(device_children)
-			DBFunctions.DBFunction().AddDevice(device_children, device_name, device_type, device_room)		
+			DBFunctions.DBFunction().AddDevice(device_children, device_name, device_type, device_room)
+		else:
+			log('!!! Device was not Found with %s Serial!!!'% device_serial, 'debug')		
 		raise cherrypy.HTTPRedirect("config_homematic")
 
 
