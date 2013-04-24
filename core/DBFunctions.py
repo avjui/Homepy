@@ -16,19 +16,21 @@ class DBFunction:
 
 	def getCountID(self, tableName, indicatorName):
 
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
+		self.tableName = tableName
+		self.indicatorName = indicatorName
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
 
-		if indicatorName == None:
-			sql = "SELECT count(ID) FROM table"
+		if self.indicatorName == None:
+			self.sql = "SELECT count(ID) FROM table"
 		else:
-			sql = "SELECT count('" + indicatorName + "') FROM '" + tableName + "'"
+			self.sql = "SELECT count('" + self.indicatorName + "') FROM '" + self.tableName + "'"
 		
-		cursor.execute(sql)
-		connection.commit()
-		result = cursor.fetchall()    
-		self.recordCount = result[0][0]
-		cursor.close()
+		self.cursor.execute(self.sql)
+		self.connection.commit()
+		self.result = self.cursor.fetchall()    
+		self.recordCount = self.result[0][0]
+		self.cursor.close()
 		return self.recordCount
 
 	
@@ -51,54 +53,58 @@ class DBFunction:
 
 	def RemoveInterface(self, interfaceSerial):
 
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
+		self.interfaceSerial = interfaceSerial
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
 
-		sql = "DELETE FROM interfaces WHERE InterfaceSerial = '" + interfaceSerial + "'"
-		cursor.execute(sql)
-		print connection.commit()
-		cursor.close()
+		self.sql = "DELETE FROM interfaces WHERE InterfaceSerial = '" + self.interfaceSerial + "'"
+		self.cursor.execute(self.sql)
+		print self.connection.commit()
+		self.cursor.close()
 		return 
 
 
 	def GetInterfaceList(self):
 
-		data = ""
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
+		self.data = ""
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
 
-		sql = "SELECT InterfaceSerial, InterfaceName FROM interfaces"
+		self.sql = "SELECT InterfaceSerial, InterfaceName FROM interfaces"
 
-		cursor.execute(sql)
-		result = cursor.fetchall()
-		cursor.close()
-		print result
-	    	return result
+		self.cursor.execute(self.sql)
+		self.result = self.cursor.fetchall()
+		self.cursor.close()
+		print self.result
+		return self.result
 
 
-	def AddDevice(self, deviceSerial, deviceName, deviceType, roomName):
+	def AddDevice(self, deviceSerial, deviceName, deviceType, roomName, companyName):
 
 		self.i = 0
-		roomID = int(self.getCountID('devices', 'OrderID' ))
-		value = 0
-
-		deviceName = deviceName.upper()
-		roomName = roomName.upper()
+		self.deviceType = deviceType
+		self.deviceSerial = deviceSerial
+		self.roomID = int(self.getCountID('devices', 'OrderID' ))
 		
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
-		for serial in deviceSerial:
-			if not serial.endswith(':0'):
-				size = len(deviceSerial)
-				if size > 2:
-					self.i = self.i + 1
-					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (roomID, deviceType, deviceName + "(" + str(self.i) + ")", serial, roomName, '0.0'))
-					connection.commit()
-				else:
-					cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (roomID, deviceType, deviceName, serial, roomName, '0.0'))
-					connection.commit()
+		self.value = 0
 
-		cursor.close()
+		self.deviceName = deviceName.upper()
+		self.roomName = roomName.upper()
+		
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
+		for self.serial in self.deviceSerial:
+			if not self.serial.endswith(':0'):
+				self.size = len(self.deviceSerial)
+				if self.size > 2:
+					self.i = self.i + 1
+					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName + "(" + str(self.i) + ")", self.serial, self.roomName, '0.0'))
+					self.connection.commit()
+				else:
+					self.cursor.execute('INSERT INTO devices(OrderID, DeviceTyp, DeviceName, DeviceSerial, RoomName, DeviceValue) VALUES(?,?,?,?,?,?)', (self.roomID, self.deviceType, self.deviceName, self.serial, self.roomName, '0.0'))
+					self.connection.commit()
+
+		self.cursor.close()
 		return True
 
 
@@ -555,19 +561,19 @@ class SonosDB:
 
 		self.data = {}
 
-		devices = DBFunction().GetSonosList()
+		self.devices = DBFunction().GetSonosList()
 				
-		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-		cursor = connection.cursor()
+		self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
 
-		for device in devices:
+		for self.device in self.devices:
 
-			sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (device[1].upper())
-			cursor.execute(sql)
-			result = cursor.fetchall()
-			self.data[device[1]] = result 
+			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (self.device[1].upper())
+			self.cursor.execute(self.sql)
+			self.result = self.cursor.fetchall()
+			self.data[self.device[1]] = self.result 
 
-		cursor.close()
+		self.cursor.close()
 		return self.data
 
 	

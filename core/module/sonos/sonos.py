@@ -15,17 +15,17 @@ class Sonos:
 
 	def GetDeviceList(self):
 		
-		info = {}
-		for ip in sonos_devices.get_speaker_ips():
-			device = SoCo(ip)
-			zone_name = device.get_speaker_info()['zone_name']
-			if zone_name != None:
-				info[zone_name] = ip
+		self.info = {}
+		for self.ip in sonos_devices.get_speaker_ips():
+			self.device = SoCo(self.ip)
+			self.zone_name = self.device.get_speaker_info()['zone_name']
+			if self.zone_name != None:
+				self.info[self.zone_name] = self.ip
 
 		
 
-		log('Function [GetDeviceList: %s ]'% (info.items()), 'debug')
-		return info.items()
+		log('Function [GetDeviceList: %s ]'% (self.info.items()), 'debug')
+		return self.info.items()
 
 	def GetTrackInfo(self):
 

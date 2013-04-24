@@ -19,7 +19,8 @@ config.ini
 *.tmproj
 *.tmproject
 *.sw?
-
+*.pydevproject
+.metadata
 # OS generated files #
 ######################
 .Spotlight-V100

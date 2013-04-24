@@ -57,7 +57,7 @@ def main():
     # Daemonize
     if options.daemonize:
        print "------------------- Preparing to run in daemon mode -------------------"
-       LogEvent("Preparing to run in daemon mode")  
+       #LogEvent("Preparing to run in daemon mode")  
        core.PROG_DAEMONIZE = True
 
     # Set port

@@ -1,12 +1,13 @@
 #
 # -*- coding: <utf-8> -*-
 #
+import os
 import urllib
 
 import core
-from core.Logger import log
+#from core.Logger import log
 
-class Cam()
+class Cam():
 
 	def UpdateCamPicture(self, camIP, camName):
 
@@ -15,9 +16,10 @@ class Cam()
 
 		try:
 			f = open(filename,'wb')
-			f.write(urllib.urlopen(camip).read())
+			f.write(urllib.urlopen(camIP).read())
 			f.close()
-			campic= "cache/%s.jpg"% (sonos[0])
+			self.campic= "cache/%s.jpg"% (camName)
 		except:
-			campic = "cache/nopic.png"
+			self.campic = "cache/nopic.png"
 
+			

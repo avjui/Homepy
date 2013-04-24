@@ -26,7 +26,7 @@ class EventServer():
 		type = i.next()					
 		value = i.next()
 		#print args
-		if type in validdatatyps:
+		if type in self.validdatatyps:
 			DBFunction().UpdateDevice(serial, type, value)
 			log('Device with the Serial : %s  switch to %s : %s'% (serial, type, value), 'debug')
 		else:

@@ -147,7 +147,7 @@ class HmXmlClasses():
 				else:
 					return True
 
-	def Multicall(slef, methoddic):
+	def Multicall(self, methoddic):
 
 		""" 
 		This function send a multicall request to server.
@@ -161,7 +161,7 @@ class HmXmlClasses():
 		for methode, values in methoddic:
 
 			self.call = getattr(self.multicall, methode)
-			sel.call(values)
+			self.call(values)
 			log('[ HomeMatic Multicall ] The  %s multicall function send %s arguments'% (methode, values), 'debug')
 
 		self.multicall()
