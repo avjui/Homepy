@@ -24,8 +24,11 @@ from core.Config import Config
 from core.DBFunctions import DBFunction
 from core.DBFunctions import SonosDB
 from core.Logger import log
-from core.module.homematic.homematicserver import EventServer
-from core.module.homematic.homematic import HmXmlClasses
+#from core.module.homematic.homematicserver import EventServer
+#from core.module.homematic.homematic import HmXmlClasses
+
+#from core.PluginManager import PluginMgr
+from core.PluginManager import *
 
 # Fixed paths to Headphones
 if hasattr(sys, 'frozen'):
@@ -84,27 +87,34 @@ def main():
     core.SONOS_DB_FILE = os.path.join(core.PROG_DIR, 'sonos.db')
     if os.path.isfile(core.SONOS_DB_FILE):
           cherrypy.process.plugins.Monitor(cherrypy.engine,SonosDB().UpdateSonosTable,5).subscribe()
-          log("Background scan for sonos information was startet", 'info')
+          #log("Background scan for sonos information was startet", 'info')
 
     # Check and read config 
     Config().Check()
-    log("Checking configfile", 'info')
+    #log("Checking configfile", 'info')
 
     # Check DB
     try:
          DBFunction().CeckDatabase()
     except Exception, e:
-         log(e,'error')
+         #log(e,'error')
+	  print error
 
     # Gogogo
 
     try:
-         Server_thread = threading.Thread(target=EventServer().start)
-         Server_thread.start()
-         HmXmlClasses().Init()
-         log('Homematic was connected with BidCos service', 'info')
+         #Server_thread = threading.Thread(target=EventServer().start)
+         #Server_thread.start()
+         #HmXmlClasses().Init()
+         #log('Homematic was connected with BidCos service', 'info')
+         pluginmgr.get_plugins()
+         #print list(sys.modules.keys())
+         pluginmgr._load_all()
+         homematic.client().get_name()
+
          core.base.start()
          while True: time.sleep(100)
+         
 
     except KeyboardInterrupt:
          log('Homepy is shutting down ....', 'info')

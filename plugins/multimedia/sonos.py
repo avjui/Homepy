@@ -12,9 +12,9 @@ from core.PluginManager import _Plugin
 
 
 
-class Sonos(object):
+class Sonos(_Plugin):
 
-	name = 'Sonos'
+	name = 'Test'
 	sonos_devices = SonosDiscovery()
 
 	def GetDeviceList(self):

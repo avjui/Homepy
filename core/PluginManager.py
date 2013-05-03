@@ -1,112 +1,76 @@
 import os
+import sys
 
-import core
-import core.DBFunctions.DBFunction as DBFunction
-import core.Logger as Logger
-
-class PluginHomeautomation(object):
-    '''
-    This is a construct for homeautomation plugins
-    '''
+from core.Logger import log
 
 
+'''
+Code came from http://yannik520.github.io/python_plugin_framework.html
+'''
+
+class _Plugin(object):
+    class __metaclass__(type):
+        def __init__(cls, name, bases, attrs):
+            if not hasattr(cls, 'plugins'):
+                cls.plugins = {}
+                #print 'in if:'
+                #print cls
+            else:
+                #print "%s %s" % (attrs['name'],name)
+                #print cls
+                cls.plugins[attrs['name']] = cls
+                #print cls.plugins
+        def show_plugins(cls):
+            for kls in cls.plugins.values():
+                    print kls
+        def get_plugins(cls):
+            return cls.plugins
+
+
+class PluginMgr(object):
+    plugin_dirs = { }
+    # make the manager class as singleton
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(PluginMgr, cls).__new__(cls, *args, **kwargs)
+
+        return cls._instance
     def __init__(self):
-        '''
-        Constructor
-        '''
-        self.company = 'None'
-        self.name = 'Homeautomation'
-        self.serial = 'None'
-        self.type = 'None'
-        self.roomName = ''
-        DBFunction.AddDevice(self.serial, self.name, self.type, self.roomName, self.company)
 
-        
-    def status(self):
-        '''
-        This return the staus of dives(es) in a dict
-        '''
-        
-        self.status = {}    
-        return  self.status
-    
-    def switch(self):
-        '''
-        This switch a specified device
-        '''
-        
-        return False
-    
-    def dim(self): 
-        '''
-        This dim a specified device
-        '''
-        
-        return False
-    
-    def add(self):
-        '''
-        Add device to config
-        '''
-        
-        return False
-    
-    def remove(self):
-        '''
-        Remove device from config
-        '''
-        
-        return False
-    
-class PluginMultimedia(object):
-    '''
-    This is a construct for multimedia plugins
-    '''      
+        self.plugin_dirs.update({
+                                 'plugins/homeautomation/' : False,
+                                 'plugins/multimedia/' : False,
+                                 'plugins/web/' : False,
+                                 })
 
-    def __init__(self):
-        '''
-        Constructor
-        '''
-        
-        self.company = 'None'
-        self.name = 'Homeautomation'
-        self.roomName = ''
-        
-    def status(self):
-        '''
-        Get status of device
-        '''
-        
-        return False
-    
-    def add(self):
-        '''
-        Add device to configuration
-        '''    
-        
-        return False
-    
-    def remove(self):
-        '''
-        Remove device from configuration
-        '''
-        
-        return False
-    
-    def action(self):
-        
-        return False
-    
-        
-class Plugins(object):
-    
-    def __init__(self):
-        self.path = core.ABS_PATH
-        self.plugindir = 'module'
-        
-        
-    
-    
-         
-         
+    def _load_all(self):
+        for (pdir, loaded) in self.plugin_dirs.iteritems():
+            if loaded: continue
+
+            sys.path.insert(1, pdir)
+            for mod in [x[:-3] for x in os.listdir(pdir) if x.endswith('.py') and not x.endswith ('.pyc')]:
+                if mod and mod != '__init__.py':
+                    if mod in sys.modules:
+                        log('Module %s already exists, skip' % mod, 'info')
+                    else:
+                        try:
+                            pymod = __import__(mod)
+                            self.plugin_dirs[pdir] = True
+                            log("Plugin module %s:%s imported"% (mod, pymod.__file__), 'info')
+                        except ImportError, e:
+                            log ('Loading failed, skip plugin %s/%s' % (os.path.basename(pdir), mod), 'error')
+
+            del(sys.path[0])
+
+
+    def get_plugins(self):
+        """ the return value is dict of name:class pairs """
+        self._load_all()
+        return _Plugin.get_plugins()
+
+
+pluginmgr = PluginMgr()
+
+
          
