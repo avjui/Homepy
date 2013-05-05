@@ -15,6 +15,7 @@ from core.PluginManager import _Plugin
 class Sonos(_Plugin):
 
 	name = 'Test'
+	type = 'multimedia'
 	sonos_devices = SonosDiscovery()
 
 	def GetDeviceList(self):

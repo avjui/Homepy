@@ -12,6 +12,7 @@ from core.PluginManager import _Plugin
 class cam(_Plugin):
 
 	name = 'Cams'
+	type = 'web'
 
 	def UpdateCamPicture(self, camIP, camName):
 

@@ -1,6 +1,7 @@
 import os
 import sys
 
+from core.DBFunctions import DBFunction
 from core.Logger import log
 
 
@@ -9,17 +10,15 @@ Code came from http://yannik520.github.io/python_plugin_framework.html
 '''
 
 class _Plugin(object):
-    class __metaclass__(type):
-        def __init__(cls, name, bases, attrs):
+     
+     class __metaclass__(type):
+        def __init__(cls,name, bases, attrs):
             if not hasattr(cls, 'plugins'):
                 cls.plugins = {}
-                #print 'in if:'
-                #print cls
             else:
-                #print "%s %s" % (attrs['name'],name)
-                #print cls
-                cls.plugins[attrs['name']] = cls
-                #print cls.plugins
+                cls.plugins[attrs['__module__']] = cls
+
+
         def show_plugins(cls):
             for kls in cls.plugins.values():
                     print kls
@@ -48,16 +47,17 @@ class PluginMgr(object):
         for (pdir, loaded) in self.plugin_dirs.iteritems():
             if loaded: continue
 
-            sys.path.insert(1, pdir)
-            for mod in [x[:-3] for x in os.listdir(pdir) if x.endswith('.py') and not x.endswith ('.pyc')]:
-                if mod and mod != '__init__.py':
+            sys.path.insert(0, pdir)
+            for mod in [x[:-3] for x in os.listdir(pdir) if x.endswith('.py')]:
+                if mod and mod != '__init__':
                     if mod in sys.modules:
                         log('Module %s already exists, skip' % mod, 'info')
                     else:
                         try:
                             pymod = __import__(mod)
                             self.plugin_dirs[pdir] = True
-                            log("Plugin module %s:%s imported"% (mod, pymod.__file__), 'info')
+                            log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
+                            DBFunction().AddPlugin(mod, pymod.__file__.split('/')[1])
                         except ImportError, e:
                             log ('Loading failed, skip plugin %s/%s' % (os.path.basename(pdir), mod), 'error')
 
@@ -68,6 +68,7 @@ class PluginMgr(object):
         """ the return value is dict of name:class pairs """
         self._load_all()
         return _Plugin.get_plugins()
+
 
 
 pluginmgr = PluginMgr()

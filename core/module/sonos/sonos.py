@@ -8,7 +8,6 @@ from lib.sonos.soco import SonosDiscovery
 import lib.feedparser as feedparser
 
 from core.Logger import log
-from core.PluginManager import _Plugin
 
 
 

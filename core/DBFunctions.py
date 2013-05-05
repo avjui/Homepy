@@ -510,18 +510,76 @@ class DBFunction:
 		return 	
 
 
+	def AddPlugin(self, Name, Type, Active=1):
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+
+		sql = "INSERT INTO plugins (Type, Name, Active) VALUES('%s','%s', '%i')"% (Type, Name, Active)
+		
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+		return 
+
+	def Add(self, Table, Company='', Serial='', Name='', Type='', roomName='',Value='', ValueType=0, IP='', Username='', Password='', ApiKey='', hidden=1):
+
+		self.i = 0
+		self.Type = Type
+		self.Serial = dSerial
+		self.roomID = int(self.getCountID('devices', 'OrderID' ))
+		
+		self.value = Value
+
+		self.deviceName = Name.upper()
+		self.roomName = roomName.upper()
+		
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
+
+		if table == 'homeautomation':
+		
+			for self.serial in self.deviceSerial:
+				if not self.serial.endswith(':0'):
+					self.size = len(self.deviceSerial)
+					if self.size > 2:
+						self.i = self.i + 1
+						self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, DeviceName, DeviceSerial, IP, RoomName, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.deviceType, self.deviceName + "(" + str(self.i) + ")", self.serial, IP, self.roomName, ValueTypy, '0.0', hidden))
+					self.connection.commit()
+				else:
+					self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, DeviceName, DeviceSerial, IP, RoomName, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.deviceType, self.deviceName, self.serial, IP, self.roomName, ValueTypy, '0.0', hidden))
+					self.connection.commit()
+	
+		elif table == 'multimedia':
+
+			cursor.execute('INSERT INTO xbmc (IP, Name, Username, Password, ApiKey, Room) VALUES(?,?,?,?,?)', (IP, Name, Username, Password, ApiKey, Room))
+			connection.commit()
+
+		elif table == 'web':
+
+			sql = "INSERT INTO web (IP, Name, Username, Password, ApiKey, Room) VALUES('%s','%s', '%s')"% (IP, Name, Username, Password, ApiKey, Room)
+			cursor.execute(sql)
+			connection.commit()
+
+		self.cursor.close()
+		return True
+
 	def CeckDatabase(self):
 
 		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
 		cursor.execute('CREATE TABLE IF NOT EXISTS interfaces (InterfaceID INTEGER, InterfaceSerial TEXT, InterfaceIP TEXT, InterfaceName TEXT ) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TETX, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS devices (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TEXT, DeviceName TEXT, DeviceSerial TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS rooms (OrderID INTEGER, RoomName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS scenes (OrderID INTEGER, SceneName TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS xbmc (OrderID INTEGER, XbmcIP TEXT, XbmcName TEXT, XbmcUsername TEXT, XbmcPassword TEXT, XbmcRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS sonos (OrderID INTEGER, SonosIP TEXT, SonosName TEXT, SonosRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS cams (OrderID INTEGER, CamIP TEXT, CamName TEXT, CamRoom TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS plugins (OrderID INTEGER, Type TEXT, Name TEXT, Active INTEGER) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS homeautomation (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TEXT, DeviceName TEXT, DeviceSerial TEXT, IP TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS multimedia(OrderID INTEGER, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS web (OrderID INTEGER, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
 		connection.commit()
 		cursor.close()
 		log("Checking DB", 'info')

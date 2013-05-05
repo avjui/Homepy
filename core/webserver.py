@@ -49,12 +49,12 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def config_homematic(self):
+	def config_homeautomation(self):
 		db = DBFunctions.DBFunction
 		interfacelist = DBFunctions.DBFunction().GetInterfaceList()
 		devicelist = DBFunctions.DBFunction().GetDeviceList()	
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
-		return serve_template(templatename="config_homematic.html", title="Homematic Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist)
+		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist)
 
 
 	@cherrypy.expose
