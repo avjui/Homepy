@@ -8,12 +8,12 @@ import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer as Server
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 
-from core.PluginManager import _Plugin
+from core.PluginManager import Homeautomation
 from core.Logger import log
 from core.Helper import get_local_ip
 from core.DBFunctions import DBFunction
 
-class Homematic(_Plugin):
+class Homematic(Homeautomation):
 
 	name = 'Homematic'
 	type = 'homeautomation'

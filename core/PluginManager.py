@@ -16,12 +16,11 @@ class _Plugin(object):
             if not hasattr(cls, 'plugins'):
                 cls.plugins = {}
             else:
-                cls.plugins[attrs['__module__']] = cls
+                if attrs['__module__'] != 'core.PluginManager':
+                     modul = attrs['__module__'].upper()
+                     cls.plugins[modul] = cls
 
 
-        def show_plugins(cls):
-            for kls in cls.plugins.values():
-                    print kls
         def get_plugins(cls):
             return cls.plugins
 
@@ -57,7 +56,7 @@ class PluginMgr(object):
                             pymod = __import__(mod)
                             self.plugin_dirs[pdir] = True
                             log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
-                            DBFunction().AddPlugin(mod, pymod.__file__.split('/')[1])
+                            DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
                         except ImportError, e:
                             log ('Loading failed, skip plugin %s/%s' % (os.path.basename(pdir), mod), 'error')
 
@@ -69,6 +68,106 @@ class PluginMgr(object):
         self._load_all()
         return _Plugin.get_plugins()
 
+
+class Homeautomation(_Plugin):
+
+ 	def start(self):
+		"""	
+		This function will be call at start.
+		With this function you can call startups for example start
+		a eventserver or same other backgroundprocesses 
+		"""
+		return
+
+	def add(self):
+		"""  	This function will be call to add a devices		
+		
+			@param deviceCompany		name of manufactor
+			@param devicename		name of device
+			@param devicetype		type of device ex. SWITCH
+			@param deviceseriel		serialnummber of device
+			@param deviceIP		ip of device
+			@param deviceroom		name of the room where the device stay
+			@param DeviceValue		value of device
+			@param Visible		0 -> false or 1 -> true 
+		"""
+		return True
+
+
+	def remove(self):
+		"""
+		This function will remove the device
+	
+		@param deviceseriel		serialnummber of device
+		"""	
+		return True
+
+
+	def switch(self):
+		"""	
+		This function will be toggle the device
+
+		@param deviceserial		serialnumber of device
+		"""
+		return True
+
+
+	def dimm(self):
+		"""	
+		This function will set device to a special value
+		
+		@param deviceserial		serialnumber of device
+		@param	value			value
+		"""
+		return True
+
+
+	def status(self):
+		""" 
+		Will return the status of all devices in a dict
+		If there is give serialnumbers in a list it will return only the the status of this devices
+	
+		@param	devicelist		list with serialnumbers of devices
+		"""
+		self.devices = {}
+		return self.device
+
+
+class Web(_Plugin):
+
+ 	def start(self):
+		"""
+		This function will be call at start.
+		With this function you can call startups for example start
+		a eventserver or same other backgroundprocesses 
+		"""
+		return
+
+	def get_data(self):
+		self.webdata = {}
+		return self.data
+
+class Multimedia(_Plugin):
+
+ 	def start(self):
+		"""
+		This function will be call at start.
+		With this function you can call startups for example start
+		a eventserver or same other backgroundprocesses 
+		"""
+		return
+
+	def action(self):
+		return True
+
+	def add(self):
+		return True
+
+	def remove(self):
+		return True
+
+	def get_mediainfo(self):
+		return True
 
 
 pluginmgr = PluginMgr()

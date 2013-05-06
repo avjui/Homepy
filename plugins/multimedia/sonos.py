@@ -8,19 +8,15 @@ from lib.sonos.soco import SonosDiscovery
 import lib.feedparser as feedparser
 
 from core.Logger import log
-from core.PluginManager import _Plugin
+from core.PluginManager import Multimedia
 
 
 
-class Sonos(_Plugin):
+class Sonos(Multimedia):
 
 	name = 'Test'
 	type = 'multimedia'
 	sonos_devices = SonosDiscovery()
-
-	def start(self):
-		print "Sonos starts"
-		return
 
 	def GetDeviceList(self):
 		

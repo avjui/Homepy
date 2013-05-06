@@ -1,7 +1,7 @@
 import os, sys
-from core.PluginManager import _Plugin
+from core.PluginManager import Homeautomation
 
-class client(_Plugin):
+class client(Homeautomation):
 
 
 	def get_name(self):
@@ -10,6 +10,3 @@ class client(_Plugin):
 	def get_test(self):
 		return "Hallo World"
 	
-	def start(self):
-		print "dmx starts"
-		return

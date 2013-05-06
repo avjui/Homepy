@@ -5,18 +5,14 @@ import os
 import urllib
 
 import core
-from core.PluginManager import _Plugin
+from core.PluginManager import Web
 
 #from core.Logger import log
 
-class cam(_Plugin):
+class cam(Web):
 
 	name = 'Cams'
 	type = 'web'
-
-	def start(self):
-		print "Webcam starts"
-		return
 
 	def UpdateCamPicture(self, camIP, camName):
 
