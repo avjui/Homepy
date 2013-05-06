@@ -103,14 +103,13 @@ def main():
     # Gogogo
 
     try:
-         # Initial Plugins
+         # Initial and start the Plugins
          log('Initial Plugins', 'info')
-         pluginmgr.get_plugins()
-         #Server_thread = threading.Thread(target=EventServer().start)
-         #Server_thread.start()
-         #HmXmlClasses().Init()
-         log('Homematic was connected with BidCos service', 'info')
-
+         plugins = pluginmgr.get_plugins()
+         print plugins
+         for key in plugins:
+              plugin = pluginmgr.get_plugins()[key]		
+              plugin().start()
          core.base.start()
          while True: time.sleep(100)
          

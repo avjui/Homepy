@@ -9,3 +9,7 @@ class client(_Plugin):
 
 	def get_test(self):
 		return "Hallo World"
+	
+	def start(self):
+		print "dmx starts"
+		return

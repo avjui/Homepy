@@ -14,6 +14,10 @@ class cam(_Plugin):
 	name = 'Cams'
 	type = 'web'
 
+	def start(self):
+		print "Webcam starts"
+		return
+
 	def UpdateCamPicture(self, camIP, camName):
 
 		# Cache the file

@@ -18,6 +18,10 @@ class Sonos(_Plugin):
 	type = 'multimedia'
 	sonos_devices = SonosDiscovery()
 
+	def start(self):
+		print "Sonos starts"
+		return
+
 	def GetDeviceList(self):
 		
 		self.info = {}

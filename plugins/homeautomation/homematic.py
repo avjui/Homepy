@@ -2,6 +2,9 @@ import os
 import sys
 import socket
 import threading
+
+#XMLRPC
+import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer as Server
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 
@@ -41,11 +44,16 @@ class Homematic(_Plugin):
 					self.server_port = v	
 				elif k == 'local_port':
 					self.local_port = v
+				else: 
+					continue
 			
-			self.server = xmlrpclib.ServerProxy("http://"+ self.server_ip + ":" + self.server_port)
-			self.interface = self.server().init(self.local_ip + ":" + self.local_port, "12345678")
+			self.serverip = "http://%s:%s"% (self.server_ip, self.server_port)
+			self.localip = "%s:%s" %(self.local_ip, self.local_port)
 
-			return True
+			self.server = xmlrpclib.ServerProxy(self.serverip)
+			#self.interface = self.server().init(self.localip , '12345678')
+			log('Homematic was connected with BidCos service', 'info')
+			return
 
 		except xmlrpclib.Fault as err:
 			log (err.faultString, 'error')
@@ -57,7 +65,6 @@ class Homematic(_Plugin):
 		self.serial= self.i.next()
 		self.type = self.i.next()					
 		self.value = self.i.next()
-		#print args
 		if self.type in self.validdatatyps:
 			DBFunction().UpdateDevice(self.serial, self.type, self.value)
 			log('Device with the Serial : %s  switch to %s : %s'% (self.serial, self.type, self.value), 'debug')
@@ -69,7 +76,6 @@ class Homematic(_Plugin):
 					
 	def _listDevices(self, array):
 		self.device = ''
-		#print array
 		return self.device
 
 	def _newDevices(self, interface_id, description_array):
@@ -96,6 +102,7 @@ class Homematic(_Plugin):
 			return
 
 	def _Event_Server_start(self):
-		#serverthread = threading.Thread(target=_EventServer())
-       	#server_thread.start()
-		pass
+		#self.serverthread = threading.Thread(target=_EventServer())
+		#self.serverthread.start()
+		print "Homematic starts"
+		log('Homematic XMLRPC server started', 'info')
