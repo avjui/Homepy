@@ -26,7 +26,10 @@ class _Plugin(object):
 
 
 class PluginMgr(object):
+
     plugin_dirs = { }
+    adding = True
+
     # make the manager class as singleton
     _instance = None
     def __new__(cls, *args, **kwargs):
@@ -57,7 +60,16 @@ class PluginMgr(object):
                             pymod = __import__(mod)
                             self.plugin_dirs[pdir] = True
                             log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
-                            DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
+                            self.plugins = DBFunction().GetList('plugins')
+                            for p in self.plugins:
+                                 if p[1] == mod.upper():
+                                    self.adding = False
+                                    break
+                                 else:
+                                    self.adding = True
+
+                            if self.adding:
+                                 DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
                         except ImportError, e:
                             log ('Loading failed, skip plugin %s/%s' % (os.path.basename(pdir), mod), 'error')
 

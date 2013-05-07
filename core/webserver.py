@@ -36,6 +36,8 @@ def serve_template(templatename, **kwargs):
 class WebInterface():
 
 
+	db = DBFunctions.DBFunction
+	
 	@cherrypy.expose
 	def index(self):
 		raise cherrypy.HTTPRedirect("home")
@@ -50,20 +52,20 @@ class WebInterface():
 
 	@cherrypy.expose
 	def config_homeautomation(self):
-		db = DBFunctions.DBFunction
-		interfacelist = DBFunctions.DBFunction().GetInterfaceList()
-		devicelist = DBFunctions.DBFunction().GetDeviceList()	
+		devicelist = self.db().GetList('homeautomation')
+		interfacelist = DBFunctions.DBFunction().GetList('homeautomation', devicetype='interface')	
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
-		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist)
+		pluginlist = self.db().GetList('plugins', type='multimedia')
+		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
 
 
 	@cherrypy.expose
-	def config_sonos(self):
-		db = DBFunctions.DBFunction
-		devicelist = db().GetSonosList()
+	def config_multimedia(self):
+		devicelist = self.db().GetList('multimedia')
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
+		pluginlist = self.db().GetList('plugins', type='multimedia')
 		#DBFunctions.DBFunction().GetZoneInfo('Jerry')
-		return serve_template(templatename="config_sonos.html", title="Sonos Config", devicelist=devicelist, roomlist=roomlist)
+		return serve_template(templatename="config_multimedia.html", title="Multimedia Config", devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
 
 
 	@cherrypy.expose

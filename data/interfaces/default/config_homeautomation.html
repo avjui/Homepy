@@ -14,6 +14,19 @@
 					<caption><h2><u>Servers</u></h2></caption>
 					<tr>
 						<td>
+							<label><b>Device Type</b></label>
+							<br />
+							<select name="Plugin" size="1" style="width:200px">
+								<option selected>---</option>
+								%for plugin in pluginlist:
+									<%
+										pluginname = plugin[1]
+									%>
+									<option>${pluginname}</option>
+								%endfor
+							</select>
+						</td>
+						<td>
 							<label><b>Interface Serial</b></label>
 							<br />
 							<input style="width:150px" type="text" name="interface_serial" id="interface_serial" value='' />
@@ -40,7 +53,7 @@
 		<p>
 		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
 					<thead>
-						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Action</th></tr>
+						<tr><th>Manufactur</th><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Action</th></tr>
 					</thead>
 					<tbody align=center>
 						%for key,value in interfacelist:
@@ -66,6 +79,19 @@
 			<table cellpadding="5">
 				<caption><h2><u>Devices</u></h2></caption>
 					<tr>
+						<td>
+							<label><b>Device Type</b></label>
+							<br />
+							<select name="Plugin" size="1" style="width:200px">
+								<option selected>---</option>
+								%for plugin in pluginlist:
+									<%
+										pluginname = plugin[1]
+									%>
+									<option>${pluginname}</option>
+								%endfor
+							</select>
+						</td>
 						<td>
 							<label><b>Device Serial</b></label>
 							<br />
@@ -102,7 +128,7 @@
 		<p>
 		<table id="interfacesort" class="grid" cellpadding="5" width=100% align=center >
 					<thead>
-						<tr><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Hidden</th><th>Remove</th><th>Update</th></tr>
+						<tr><th>Manufactur</th><th>Serial</th><th>Name</th><th>Place</th><th>Type</th><th>Hidden</th><th>Remove</th><th>Update</th></tr>
 					</thead>
 					<tbody align=center>
 						%for device in devicelist:

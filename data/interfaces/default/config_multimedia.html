@@ -11,10 +11,23 @@
 				<lable><h1><u>${title}</u></h1></lable>
 			<form action="addXbmc">
 			<table cellpadding="5">
-				<caption><h2><u>Add XBMC Server</u></h2></caption>
+				<caption><h2><u>Add Multimedia Device</u></h2></caption>
 					<tr>
 						<td>
-							<label><b>XBMC IP</b></label>
+							<label><b>Device Type</b></label>
+							<br />
+							<select name="Plugin" size="1" style="width:200px">
+								<option selected>---</option>
+								%for plugin in pluginlist:
+									<%
+										pluginname = plugin[1]
+									%>
+									<option>${pluginname}</option>
+								%endfor
+							</select>
+						</td>
+						<td>
+							<label><b>IP</b></label>
 							<br />
 							<input style="width:120px" type="text" name="xbmc_ip" id="xbmc_ip" value='' />
 						</td>
@@ -58,16 +71,19 @@
 		<p>
 		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
 					<thead>
-						<tr><th>IP</th><th>Name</th><th>Place</th><th>Action</th></tr>
+						<tr><th>Manufactur</th><th>IP</th><th>Name</th><th>Place</th><th>Action</th></tr>
 					</thead>
 					<tbody align=center>
-						%for device in xbmcs:
+						%for device in devicelist:
 							<%	
-							xip = device[0]
-							xname = device[1]
-							xroom = device[2]
+							name = device[2]
+							ip = device[1]
+							manufactur = device[0]
+							user = device[3]
+							password = device[4]
+							room = device[6]
 							%>
-						 <tr><td>${xip}</td><td>${xname}</td><td>${xroom}</td><td class="add_xbmc" ><input style="width:70px" type="button" onclick="location.href='removeXbmc?xbmc_ip=${xip}'" value="Remove"></td></tr>
+						 <tr><td>${manufactur}</td><td>${ip}</td><td>${name}</td><td>${room}</td><td class="add_xbmc" ><input style="width:70px" type="button" onclick="location.href='removeXbmc?xbmc_ip=${ip}'" value="Remove"></td></tr>
 						%endfor
 					</tbody>
 				</table>

@@ -17,7 +17,8 @@ from core.DBFunctions import DBFunction
 class Sonos(Multimedia):
 
 	sonos_devices = SonosDiscovery()
-
+	adding = True
+	
 	def start(self):
 
 		self.sonos_devices = Sonos()._GetDeviceList()
@@ -26,9 +27,18 @@ class Sonos(Multimedia):
 		for sonos in self.sonos_devices:
 			self.name = sonos[0]
 			self.ip = sonos[1]			
-			DBFunction().Add('multimedia', self.manufactur, '', self.name, '', '', '', '', self.ip, '', '', '', 0)
-			log('Found some sonos device : %s - %s'% (self.name, self.ip), 'info')
-			print('Found some sonos device : %s - %s'% (self.name, self.ip))
+			self.existing_devices = DBFunction().GetList('multimedia', company='SONOS')
+			for d in self.existing_devices:
+				if d[1] == self.ip:
+					self.adding = False
+					break
+				else:
+					self.adding = True
+
+			if self.adding:		
+				DBFunction().Add('multimedia', self.manufactur, '', self.name, '', '', '', '', self.ip, '', '', '', 0)
+				log('Found some new sonos device : %s - %s'% (self.name, self.ip), 'info')
+				print('Found some sonos device : %s - %s'% (self.name, self.ip))
 
 	def action(self, zonenip, function, value=''):
 		
