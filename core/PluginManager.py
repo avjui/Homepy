@@ -39,6 +39,7 @@ class PluginMgr(object):
         self.plugin_dirs.update({
                                  'plugins/homeautomation/' : False,
                                  'plugins/multimedia/' : False,
+                                 'plugins/notification' : False,
                                  'plugins/web/' : False,
                                  })
 
@@ -117,7 +118,8 @@ class Homeautomation(_Plugin):
 		This function will set device to a special value
 		
 		@param deviceserial		serialnumber of device
-		@param	value			value
+		@param value			value
+		@param t			time to dimm
 		"""
 		return True
 
@@ -133,6 +135,77 @@ class Homeautomation(_Plugin):
 		return self.device
 
 
+class Multimedia(_Plugin):
+
+ 	def start(self):
+		"""
+		This function will be call at start.
+		With this function you can call startups for example start
+		a eventserver or same other backgroundprocesses 
+		"""
+		return
+
+	def action(self, a):
+		"""
+		@param a	valid action are (play, stop, pause, forrword, rewind, volup, voldown)
+		"""
+
+		return True
+
+	def add(self):
+		return True
+
+	def remove(self):
+		return True
+
+	def get_mediainfo(self):
+		""" This function return a dict with media informations
+		    This dict must contain few things
+
+		    First mediatyp : 'audio' or 'video'
+
+		    For audio
+			interpret :
+		       album :
+			title :
+			cover :
+			timestamp : 
+			volume :
+
+		   For video
+			title :
+			cover :
+			descritpion :
+			timestamp :
+			volume :				
+		"""
+
+		self.info({
+			     'mediatyp' : 'audio',
+			     'interpret' : ' ',
+			     'album' : ' ',
+			     'title' : ' ',
+			     'cover' : 'nocover.png',
+			     'timestamp' : ('00.00.00', '00.00.00'),
+			     'volume' : 0,
+			})	
+
+		return self.info
+
+class Notification(_Plugin):
+
+ 	def start(self):
+		"""
+		This function will be call at start.
+		With this function you can call startups for example start
+		a eventserver or same other backgroundprocesses 
+		"""
+		return
+
+	def send_message(self):
+		return 
+
+
 class Web(_Plugin):
 
  	def start(self):
@@ -146,28 +219,6 @@ class Web(_Plugin):
 	def get_data(self):
 		self.webdata = {}
 		return self.data
-
-class Multimedia(_Plugin):
-
- 	def start(self):
-		"""
-		This function will be call at start.
-		With this function you can call startups for example start
-		a eventserver or same other backgroundprocesses 
-		"""
-		return
-
-	def action(self):
-		return True
-
-	def add(self):
-		return True
-
-	def remove(self):
-		return True
-
-	def get_mediainfo(self):
-		return True
 
 
 pluginmgr = PluginMgr()
