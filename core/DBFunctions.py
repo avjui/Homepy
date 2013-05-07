@@ -588,6 +588,45 @@ class DBFunction:
 		return 
 
 
+	def GetList(self, Table, roomName='', company=''):
+
+
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
+	
+		if Table == 'homeautomation':
+			if roomName == '' and company == '':
+				sql = "SELECT DeviceCompany, DeviceTyp , DeviceName , DeviceSerial , Room, DeviceValue FROM homeautomation ORDER BY OrderID"
+			elif company !='':
+				sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue, Room FROM homeautomation WHERE DeviceCompany='%s'"% (company)
+			else:
+				sql = "SELECT DeviceCompany, DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue FROM homeautomation WHERE Room='%s'"% (roomName)
+		
+		elif Table == 'multimedia':
+			if roomName == '':
+				sql = "SELECT DeviceCompany, Name, IP, Username, Password, ApiKey, Room FROM multimedia ORDER BY OrderID"
+			elif company !='':
+				sql = "SELECT Name, IP, Username, Password, ApiKey, Room WHERE DeviceCompany='%s'"% (company)
+			else:
+				sql = "SELECT DeviceCompany, Name, IP, Username, Password, ApiKey WHERE Room='%s'"% (roomName)
+
+		elif Table == 'notification':
+			sql = "SELECT DeviceTyp , DeviceName , DeviceSerial , RoomName, DeviceValue FROM notification ORDER BY OrderID"
+
+		elif Table == 'web':
+			if roomName == '':
+				sql = "SELECT DeviceCompany, Name, IP, Username, Password, ApiKey, Room FROM web ORDER BY OrderID"
+			elif company !='':
+				sql = "SELECT Name, IP, Username, Password, ApiKey, Room WHERE DeviceCompany='%s'"% (company)
+			else:
+				sql = "SELECT DeviceCompany, Name, IP, Username, Password, ApiKey FROM web WHERE Room='%s'"% (roomName)		
+		
+		log(sql, 'debug')	
+		self.cursor.execute(sql)
+		self.result = self.cursor.fetchall()
+		self.cursor.close()
+	    	return self.result
+
 	def CeckDatabase(self):
 
 		connection = sqlite3.connect(core.DB_FILE, timeout=20)
@@ -601,7 +640,7 @@ class DBFunction:
 		cursor.execute('CREATE TABLE IF NOT EXISTS sonos (OrderID INTEGER, SonosIP TEXT, SonosName TEXT, SonosRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS cams (OrderID INTEGER, CamIP TEXT, CamName TEXT, CamRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS plugins (OrderID INTEGER, Type TEXT, Name TEXT, Active INTEGER) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS homeautomation (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TEXT, DeviceName TEXT, DeviceSerial TEXT, IP TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS homeautomation (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TEXT, DeviceName TEXT, DeviceSerial TEXT, IP TEXT, Room TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS multimedia(OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS notification (OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS web (OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')

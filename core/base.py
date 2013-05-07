@@ -68,6 +68,8 @@ def start():
 		daemon = Daemonizer(cherrypy.engine)
 		daemon.subscribe()
 
+	#Make cherrypy silence
+	cherrypy.log.access_log.propagate = False
 
 	#cherrypy.process.servers.check_port(core.HTTP_HOST, core.HTTP_PORT)
 	cherrypy.engine.start()
