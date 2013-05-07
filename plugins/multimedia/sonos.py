@@ -9,19 +9,43 @@ import lib.feedparser as feedparser
 
 from core.Logger import log
 from core.PluginManager import Multimedia
+from core.Helper import Replacesq
+from core.DBFunctions import DBFunction
 
 
 
 class Sonos(Multimedia):
 
-	name = 'Test'
-	type = 'multimedia'
 	sonos_devices = SonosDiscovery()
 
-	def GetDeviceList(self):
+	def start(self):
+
+		self.sonos_devices = Sonos()._GetDeviceList()
+		self.manufactur = 'SONOS'
+		
+		for sonos in self.sonos_devices:
+			self.name = sonos[0]
+			self.ip = sonos[1]			
+			DBFunction().Add('multimedia', self.manufactur, '', self.name, '', '', '', '', self.ip, '', '', '', 0)
+			log('Found some sonos device : %s - %s'% (self.name, self.ip), 'info')
+			print('Found some sonos device : %s - %s'% (self.name, self.ip))
+
+	def action(self, zonenip, function, value=''):
+		
+		self.sonos = SoCo(zonenip)
+
+		self.func = getattr(self.sonos,function)
+		if value == '':
+			self.func()
+		else:
+			self.func(value)
+		log('Function %s for %s IP'% (function, zonenip), 'debug')
+
+
+	def _GetDeviceList(self):
 		
 		self.info = {}
-		for self.ip in sonos_devices.get_speaker_ips():
+		for self.ip in self.sonos_devices.get_speaker_ips():
 			self.device = SoCo(self.ip)
 			self.zone_name = self.device.get_speaker_info()['zone_name']
 			if self.zone_name != None:
@@ -32,7 +56,7 @@ class Sonos(Multimedia):
 		log('Function [GetDeviceList: %s ]'% (self.info.items()), 'debug')
 		return self.info.items()
 
-	def GetTrackInfo(self):
+	def _GetTrackInfo(self):
 
 		self.art = {}
 		sonoslist = self.GetDeviceList()
@@ -109,16 +133,47 @@ class Sonos(Multimedia):
 		log('Function [GetTrackInfo : %s ]'% (self.art), 'debug')
 		return self.art
 
+	def _UpdateSonosTable(self):
 
-	def SonosFunctions(self, zonenip, function, value=''):
+		try:
+			self.devices = Sonos().GetTrackInfo()
 		
-		sonos = SoCo(zonenip)
+			self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
+			self.cursor = self.connection.cursor()
 
-		func = getattr(sonos,function)
-		if value == '':
-			func()
-		else:
-			func(value)
-		log('Function %s for %s IP'% (function, zonenip), 'debug')
+			for key,device in self.devices.iteritems():
 
+				self.title = Replacesq(device[3])
+				self.albumname = Replacesq(device[4])
+				self.artist = Replacesq(device[5])
+				
 		
+				sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], self.title , self.albumname, self.artist, device[2])
+				self.cursor.execute(sql)
+				self.connection.commit()
+	
+			self.cursor.close()
+			log('Sonos table was updatet', 'debug')
+
+		except Exception,e:
+			log(e, 'error')	
+
+
+	def _GetZoneInfo(self, zoneName=''):
+
+		self.data = {}
+
+		self.devices = DBFunction().GetSonosList()
+				
+		self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
+
+		for self.device in self.devices:
+
+			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (self.device[1].upper())
+			self.cursor.execute(self.sql)
+			self.result = self.cursor.fetchall()
+			self.data[self.device[1]] = self.result 
+
+		self.cursor.close()
+		return self.data

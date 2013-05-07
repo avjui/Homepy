@@ -109,6 +109,7 @@ def main():
          print plugins
          for key in plugins:
               plugin = pluginmgr.get_plugins()[key]		
+              print key
               plugin().start()
          core.base.start()
          while True: time.sleep(100)

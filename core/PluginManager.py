@@ -6,7 +6,7 @@ from core.Logger import log
 
 
 '''
-Code came from http://yannik520.github.io/python_plugin_framework.html
+Code base on code from http://yannik520.github.io/python_plugin_framework.html
 '''
 
 class _Plugin(object):
@@ -83,14 +83,14 @@ class Homeautomation(_Plugin):
 	def add(self):
 		"""  	This function will be call to add a devices		
 		
-			@param deviceCompany		name of manufactor
-			@param devicename		name of device
-			@param devicetype		type of device ex. SWITCH
-			@param deviceseriel		serialnummber of device
-			@param deviceIP		ip of device
-			@param deviceroom		name of the room where the device stay
-			@param DeviceValue		value of device
-			@param Visible		0 -> false or 1 -> true 
+			@param deviceCompany	       name of manufactor
+			@param devicename           name of device
+			@param devicetype           type of device ex. SWITCH
+			@param deviceseriel         serialnummber of device
+			@param deviceIP             ip of device
+			@param deviceroom           name of the room where the device stay
+			@param DeviceValue          value of device
+			@param Visible              0 -> false or 1 -> true 
 		"""
 		return True
 
@@ -99,7 +99,7 @@ class Homeautomation(_Plugin):
 		"""
 		This function will remove the device
 	
-		@param deviceseriel		serialnummber of device
+		@param deviceseriel                serialnummber of device
 		"""	
 		return True
 
@@ -108,7 +108,7 @@ class Homeautomation(_Plugin):
 		"""	
 		This function will be toggle the device
 
-		@param deviceserial		serialnumber of device
+		@param deviceserial                serialnumber of device
 		"""
 		return True
 
@@ -117,9 +117,9 @@ class Homeautomation(_Plugin):
 		"""	
 		This function will set device to a special value
 		
-		@param deviceserial		serialnumber of device
-		@param value			value
-		@param t			time to dimm
+		@param deviceserial                serialnumber of device
+		@param value                       value
+		@param t                           time to dimm
 		"""
 		return True
 
@@ -129,7 +129,7 @@ class Homeautomation(_Plugin):
 		Will return the status of all devices in a dict
 		If there is give serialnumbers in a list it will return only the the status of this devices
 	
-		@param	devicelist		list with serialnumbers of devices
+		@param	devicelist                  list with serialnumbers of devices
 		"""
 		self.devices = {}
 		return self.device
@@ -145,9 +145,11 @@ class Multimedia(_Plugin):
 		"""
 		return
 
-	def action(self, a):
+	def action(self, ip, a):
 		"""
-		@param a	valid action are (play, stop, pause, forrword, rewind, volup, voldown)
+		@param ip                          ip of device
+		@param a                           valid action are (play, stop, pause, forrword, rewind, volume)
+		@param value                       e.x. for volume 
 		"""
 
 		return True
@@ -174,8 +176,8 @@ class Multimedia(_Plugin):
 
 		   For video
 			title :
-			cover :
 			descritpion :
+			cover :
 			timestamp :
 			volume :				
 		"""
@@ -203,7 +205,7 @@ class Notification(_Plugin):
 		return
 
 	def send_message(self):
-		return 
+		return True
 
 
 class Web(_Plugin):

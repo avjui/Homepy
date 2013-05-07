@@ -526,7 +526,7 @@ class DBFunction:
 
 		self.i = 0
 		self.Type = Type
-		self.Serial = dSerial
+		self.Serial = Serial
 		self.roomID = int(self.getCountID('devices', 'OrderID' ))
 		
 		self.value = Value
@@ -537,7 +537,7 @@ class DBFunction:
 		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		self.cursor = self.connection.cursor()
 
-		if table == 'homeautomation':
+		if Table == 'homeautomation':
 		
 			for self.serial in self.deviceSerial:
 				if not self.serial.endswith(':0'):
@@ -550,19 +550,43 @@ class DBFunction:
 					self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, DeviceName, DeviceSerial, IP, RoomName, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.deviceType, self.deviceName, self.serial, IP, self.roomName, ValueTypy, '0.0', hidden))
 					self.connection.commit()
 	
-		elif table == 'multimedia':
+		elif Table == 'multimedia':
 
-			cursor.execute('INSERT INTO xbmc (IP, Name, Username, Password, ApiKey, Room) VALUES(?,?,?,?,?)', (IP, Name, Username, Password, ApiKey, Room))
-			connection.commit()
+			self.cursor.execute('INSERT INTO multimedia (OrderID, DeviceCompany, IP, Name, Username, Password, ApiKey, Room) VALUES(?,?,?,?,?,?,?,?)', (self.roomID, Company, IP, self.deviceName, Username, Password, ApiKey, self.roomName))
+			self.connection.commit()
 
-		elif table == 'web':
+		elif Table == 'notification':
 
-			sql = "INSERT INTO web (IP, Name, Username, Password, ApiKey, Room) VALUES('%s','%s', '%s')"% (IP, Name, Username, Password, ApiKey, Room)
-			cursor.execute(sql)
-			connection.commit()
+			self.cursor.execute('INSERT INTO notification (OrderID, DeviceCompany, IP, Name, Username, Password, ApiKey) VALUES(?,?,?,?,?,?,?)', (self.roomID, Company, IP, self.deviceName, Username, Password, ApiKey))
+			self.connection.commit()
+
+		elif Table == 'web':
+
+			self.sql = "INSERT INTO web (IP, Name, Username, Password, ApiKey, Room) VALUES('%s','%s', '%s')"% (IP, self.deviceName, Username, Password, ApiKey, self.roomName)
+			self.cursor.execute(self.sql)
+			self.connection.commit()
+
+		
 
 		self.cursor.close()
 		return True
+
+
+	def Remove(self, Table, Serial= '', IP=''):
+
+		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		self.cursor = self.connection.cursor()
+
+		if Table == 'homeautomation':
+			sql = "DELETE FROM %s WHERE DeviceSerial = %s"% (Table, Serial)
+		else:
+			sql = "DELETE FROM %s WHERE IP = %s"% (Table, IP)
+
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+		return 
+
 
 	def CeckDatabase(self):
 
@@ -578,8 +602,9 @@ class DBFunction:
 		cursor.execute('CREATE TABLE IF NOT EXISTS cams (OrderID INTEGER, CamIP TEXT, CamName TEXT, CamRoom TEXT) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS plugins (OrderID INTEGER, Type TEXT, Name TEXT, Active INTEGER) ')
 		cursor.execute('CREATE TABLE IF NOT EXISTS homeautomation (OrderID INTEGER, DeviceCompany TEXT, DeviceTyp TEXT, DeviceName TEXT, DeviceSerial TEXT, IP TEXT, RoomName TEXT, ValueType TEXT, DeviceValue TEXT, DeviceVisible INTEGER) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS multimedia(OrderID INTEGER, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
-		cursor.execute('CREATE TABLE IF NOT EXISTS web (OrderID INTEGER, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS multimedia(OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS notification (OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT) ')
+		cursor.execute('CREATE TABLE IF NOT EXISTS web (OrderID INTEGER, DeviceCompany TEXT, IP TEXT, Name TEXT, Username TEXT, Password TEXT, ApiKey TEXT, Room TEXT) ')
 		connection.commit()
 		cursor.close()
 		log("Checking DB", 'info')
