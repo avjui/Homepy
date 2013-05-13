@@ -9,6 +9,7 @@
 	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
+		%for trackinfolist in trackinfolists:	
 			%for key,devices in trackinfolist.iteritems():
 				<%
 				for device in devices:
@@ -124,4 +125,5 @@
 		</script>
 		</div>
 		%endfor
+	%endfor
 </%def>

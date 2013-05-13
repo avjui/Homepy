@@ -17,7 +17,10 @@ class Homematic(Homeautomation):
 
 	name = 'Homematic'
 	type = 'homeautomation'
-
+	config = [{
+    		'name': 'automation',
+		'order': 101,
+		}]
 
 	def __init__(self):
 

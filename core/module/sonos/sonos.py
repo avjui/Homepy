@@ -19,7 +19,7 @@ class Sonos(object):
 	def GetDeviceList(self):
 		
 		self.info = {}
-		for self.ip in sonos_devices.get_speaker_ips():
+		for self.ip in self.sonos_devices.get_speaker_ips():
 			self.device = SoCo(self.ip)
 			self.zone_name = self.device.get_speaker_info()['zone_name']
 			if self.zone_name != None:

@@ -18,6 +18,12 @@ class _Plugin(object):
             else:
                 if attrs['__module__'] != 'core.PluginManager':
                      modul = attrs['__module__'].upper()
+                     # will be added later
+                     #try:
+                         # will be added later
+                     #    self.config = attrs['config']	
+                     #except:
+                     #    log("No config found for %s plugin "% (modul), 'info')
                      cls.plugins[modul] = cls
 
 
@@ -58,6 +64,7 @@ class PluginMgr(object):
                     else:
                         try:
                             pymod = __import__(mod)
+                            splitted = mod.split('.')
                             self.plugin_dirs[pdir] = True
                             log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
                             self.plugins = DBFunction().GetList('plugins')
@@ -183,14 +190,16 @@ class Multimedia(_Plugin):
 		       album :
 			title :
 			cover :
-			timestamp : 
+			duration :
+			position: 
 			volume :
 
 		   For video
 			title :
 			descritpion :
 			cover :
-			timestamp :
+			duration :
+			position: 
 			volume :				
 		"""
 

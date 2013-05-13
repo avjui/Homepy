@@ -616,7 +616,7 @@ class DBFunction:
 				sql = "SELECT DeviceCompany, IP, Name, Username, Password, ApiKey FROM multimedia WHERE Room='%s'"% (roomName)
 
 		elif Table == 'notification':
-			sql = "SELECT DeviceTyp , Name , DeviceSerial , Room, DeviceValue FROM notification ORDER BY OrderID"
+			sql = "SELECT DeviceCompany, IP, Name, Username, Password, ApiKey FROM notification ORDER BY OrderID"
 
 		elif Table == 'web':
 			if roomName == '' and company == '':
