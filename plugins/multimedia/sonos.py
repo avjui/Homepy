@@ -3,7 +3,8 @@
 #
 import urllib2
 import os
-import threading
+import thread
+import time
 import sqlite3
 
 from lib.sonos.soco import SoCo
@@ -66,8 +67,7 @@ class Sonos(Multimedia):
 
 	def _BackgroundCheck(self):
 
-		self.SonosBackground= threading.Timer(5.0, self._UpdateSonosTable)
-		self.SonosBackground.start()
+		thread.start_new_thread(self._UpdateSonosTable, ())
 		log('SONOS background update thread was started', 'debug') 
 
 	def _GetDeviceList(self):
@@ -188,24 +188,26 @@ class Sonos(Multimedia):
 	def _UpdateSonosTable(self):
 
 		try:
-			self.devices = self._GetTrackInfo()
+			while True:
+				self.devices = self._GetTrackInfo()
 		
-			self.connection = sqlite3.connect(self.SONOS_DB, timeout=20)
-			self.cursor = self.connection.cursor()
+				self.connection = sqlite3.connect(self.SONOS_DB, timeout=20)
+				self.cursor = self.connection.cursor()
 
-			for key,device in self.devices.iteritems():
-
-				self.title = Replacesq(device[3])
-				self.albumname = Replacesq(device[4])
-				self.artist = Replacesq(device[5])
-				
-		
-				sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s', Duration='%s', Position='%s', Volume='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], self.title , self.albumname, self.artist, device[2], device[6], device[7], device[8])
-				self.cursor.execute(sql)
-				self.connection.commit()
+				for key,device in self.devices.iteritems():
 	
-			self.cursor.close()
-			log('Sonos table was updatet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', 'debug')
+					self.title = Replacesq(device[3])
+					self.albumname = Replacesq(device[4])
+					self.artist = Replacesq(device[5])
+				
+			
+					sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s', Duration='%s', Position='%s', Volume='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], self.title , self.albumname, self.artist, device[2], device[6], device[7], device[8])
+					self.cursor.execute(sql)
+					self.connection.commit()
+	
+				self.cursor.close()
+				log('Sonos table was updatet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', 'debug')
+				time.sleep(5)
 
 		except Exception,e:
 			log(e, 'error')	
