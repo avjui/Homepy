@@ -26,10 +26,9 @@ class Sonos(Multimedia):
 
 	def start(self):
 
-		self.sonos_devices = Sonos()._GetDeviceList()
 		self.manufactur = 'SONOS'
 		
-		for sonos in self.sonos_devices:
+		for sonos in self._GetDeviceList():
 			self.name = sonos[0]
 			self.ip = sonos[1]			
 			self.existing_devices = DBFunction().GetList('multimedia', company='SONOS')
@@ -42,7 +41,7 @@ class Sonos(Multimedia):
 
 			if self.adding:		
 				DBFunction().Add('multimedia', self.manufactur, '', self.name, '', '', '', '', self.ip, '', '', '', 0)
-				self._CreateSonosTable(self.sonos_devices)
+				self._CreateSonosTable(self._GetDeviceList())
 				log('Found some new sonos device : %s - %s'% (self.name, self.ip), 'info')
 				print('Found some sonos device : %s - %s'% (self.name, self.ip))
 
@@ -67,7 +66,7 @@ class Sonos(Multimedia):
 
 	def _BackgroundCheck(self):
 
-		self.SonosBackground= threading.Timer(5, self._UpdateSonosTable)
+		self.SonosBackground= threading.Timer(5.0, self._UpdateSonosTable)
 		self.SonosBackground.start()
 		log('SONOS background update thread was started', 'debug') 
 
@@ -88,14 +87,14 @@ class Sonos(Multimedia):
 	def _GetTrackInfo(self):
 
 		self.art = {}
-		sonoslist = self.GetDeviceList()
+		sonoslist = self._GetDeviceList()
 		#try:
 		for sonos in sonoslist:
 
 				sonosdevice = SoCo(sonos[1])
 				self.track = sonosdevice.get_current_track_info()
 				self.serial = sonosdevice.get_speaker_info()['serial_number']
-
+				self.volume = sonosdevice.volume()
 
 
 				self.album_art_url = self.track['album_art'].encode('utf-8')
@@ -163,7 +162,7 @@ class Sonos(Multimedia):
 					self.album_art_url = "cache/nocover.png"
 			
 					
-				self.art[sonos[0]] = sonos[0], sonos[1], self.album_art_url, self.title, self.album, self.album_artist, self.duration, self.position, 
+				self.art[sonos[0]] = sonos[0], sonos[1], self.album_art_url, self.title, self.album, self.album_artist, self.duration, self.position, self.volume
 				
 		#except:
 		#	return 
@@ -172,15 +171,15 @@ class Sonos(Multimedia):
 
 	def _CreateSonosTable(self, devices):
 
-		self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
+		self.connection = sqlite3.connect(self.SONOS_DB, timeout=20)
 		self.cursor = self.connection.cursor()
 
 		for device in devices:
 			
-			sql = "CREATE TABLE IF NOT EXISTS '%s' (OrderID INTEGER, DeviceName TEXT, DeviceIP TEXT, Title TEXT, AlbumName TEXT, Artist TEXT, AlbumArt TEXT, Duration Text, Position TEXT)"% (device[0].upper())
+			sql = "CREATE TABLE IF NOT EXISTS '%s' (OrderID INTEGER, DeviceName TEXT, DeviceIP TEXT, Title TEXT, AlbumName TEXT, Artist TEXT, AlbumArt TEXT, Duration Text, Position TEXT, Volume TEXT)"% (device[0].upper())
 			self. cursor.execute(sql)
 			self.connection.commit()
-			sql = "INSERT OR REPLACE INTO '%s'(OrderID ,DeviceIP, DeviceName, Title, AlbumName, Artist, AlbumArt, Duration, Position) VALUES (0, '', '', '', '', '', '', '', '')"% (device[0].upper())
+			sql = "INSERT OR REPLACE INTO '%s'(OrderID ,DeviceIP, DeviceName, Title, AlbumName, Artist, AlbumArt, Duration, Position, Volume) VALUES (0, '', '', '', '', '', '', '', '', '0')"% (device[0].upper())
 			self.cursor.execute(sql)
 			self.connection.commit()
 		self.cursor.close()
@@ -191,7 +190,7 @@ class Sonos(Multimedia):
 		try:
 			self.devices = self._GetTrackInfo()
 		
-			self.connection = sqlite3.connect(SONOS_DB, timeout=20)
+			self.connection = sqlite3.connect(self.SONOS_DB, timeout=20)
 			self.cursor = self.connection.cursor()
 
 			for key,device in self.devices.iteritems():
@@ -201,7 +200,7 @@ class Sonos(Multimedia):
 				self.artist = Replacesq(device[5])
 				
 		
-				sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s', Duration='%s', Position='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], self.title , self.albumname, self.artist, device[2], device[6], device[7])
+				sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s', Duration='%s', Position='%s', Volume='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], self.title , self.albumname, self.artist, device[2], device[6], device[7], device[8])
 				self.cursor.execute(sql)
 				self.connection.commit()
 	
@@ -223,22 +222,24 @@ class Sonos(Multimedia):
 
 		for self.device in self.devices:
 
-			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist, Duration, Position  FROM '%s'"% (self.device[2].upper())
+			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist, Duration, Position, Volume  FROM '%s'"% (self.device[2].upper())
 			self.cursor.execute(self.sql)
 			self.result = self.cursor.fetchall()
 			#print self.result
 	 		for record in self.result:
 				self.resultdic = ({'mediatyp' : 'audio',
-							'interpret' : record[5], 
+							'devicename' : record[0],
+							'deviceip' : record[1],
+							'artist' : record[5], 
 			       			'album' : record[4],
 							'title' : record[3],
 							'cover' : record[2],
 							'duration' : record[6],
 							'position' : record[7],
-							'volume' : '20',
+							'volume' : record[8],
 						})	
-			print self.resultdic
-			self.data[self.device[1]] = self.result 
+			#print self.resultdic
+			self.data[self.device[1]] = self.resultdic 
 
 		self.cursor.close()
 		return self.data

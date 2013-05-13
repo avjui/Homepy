@@ -12,15 +12,18 @@
 		%for trackinfolist in trackinfolists:	
 			%for key,devices in trackinfolist.iteritems():
 				<%
-				for device in devices:
 					i = i + 500
-					zonename = device[0]
-					zonenip = device[1]
-					art = device[2]
-					title = device[3]
-					album = device[4]		
-					artist = device[5]
-					coverid = device[1].replace('.', '')
+					mediatype = devices['mediatyp']
+					zonename = devices['devicename']
+					zonenip = devices['deviceip']
+					art = devices['cover']
+					title = devices['title']
+					album = devices['album']		
+					artist = devices['artist']
+					duration = devices['duration']
+					position = devices['position']
+					volume = devices['volume']
+					coverid = devices['deviceip'].replace('.', '')
 					time = 4000 + i
 				%>			
 		

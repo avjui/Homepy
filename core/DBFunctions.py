@@ -694,17 +694,17 @@ class SonosDB:
 
 		self.data = {}
 
-		self.devices = DBFunction().GetSonosList()
+		#self.devices = DBFunction().GetSonosList()
 				
-		self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-		self.cursor = self.connection.cursor()
+		#self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
+		#self.cursor = self.connection.cursor()
 
-		for self.device in self.devices:
+		#for self.device in self.devices:
 
-			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (self.device[1].upper())
-			self.cursor.execute(self.sql)
-			self.result = self.cursor.fetchall()
-			self.data[self.device[1]] = self.result 
+		#	self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (self.device[1].upper())
+		#	self.cursor.execute(self.sql)
+		#	self.result = self.cursor.fetchall()
+		#	self.data[self.device[1]] = self.result 
 
-		self.cursor.close()
+		#self.cursor.close()
 		return self.data
