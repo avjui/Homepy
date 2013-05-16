@@ -1,16 +1,17 @@
 import re
 import socket
 
+from core.Logger import log
 
 def Replacesq(string):
 	
 	try:
 		cleanstr = string.replace("'", "''")
 
-	except:
+	except AttributeError:
 		cleanstr = string
 
-	return string
+	return cleanstr
 
 
 def get_local_ip():
@@ -22,10 +23,8 @@ def get_local_ip():
         try:
             s.connect(('8.8.8.8', 9))
             ip = s.getsockname()[0]
-        except socket.error:
-            raise
-        finally:
-            del s
+        except socket.error as e:
+            log('Can not get local ip : %s'% e, 'info')
 
         return ip
 

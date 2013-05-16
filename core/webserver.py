@@ -60,7 +60,8 @@ class WebInterface():
 	@cherrypy.expose
 	def config_homeautomation(self):
 		devicelist = self.db().GetList('homeautomation')
-		interfacelist = self.db().GetList('homeautomation', devicetype='interface')	
+		#interfacelist = self.db().GetList('homeautomation', devicetype='interface')	
+		interfacelist = {}
 		roomlist = self.db().GetRoomsList()
 		pluginlist = self.db().GetList('plugins', type='homeautomation')
 		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
@@ -147,23 +148,19 @@ class WebInterface():
 
 	@cherrypy.expose
 	def addDevice(self, plugin, device_serial, device_name, device_room):
-		db = DBFunctions.DBFunction
-		if HmXmlClasses().addHMDevice(device_serial):
-			log('Device found with %s Serial'% device_serial, 'debug')
-			# get the childdevices
-			device_children = HmXmlClasses().getHMChildren(device_serial)
-		
-			# Parsing type
-			description = HmXmlClasses().GetHmDescription()
-			self.data = ParseTyps(device_serial, description)
-			for key, value in self.data.items():
-				device_type = value[1]
 
-			self.data = HmXmlClasses().getParamsetFromHMDevice(device_children)
-			DBFunctions.DBFunction().AddDevice(device_children, device_name, device_type, device_room)
+		self.plugincls = pluginmgr.get_plugins()[plugin]
+		self.data = self.plugincls().add(device_serial)
+		print self.data
+		if self.data:
+			log('Device found with %s Serial'% device_serial, 'debug')
+			for key, value in self.data.items():
+				self.device_child = key
+				self.device_type = value[1]
+				self.db().Add('homeautomation', Company=plugin, Name=device_name, ValueType=self.device_type, Serial=self.device_child, roomName=device_room)
 		else:
 			log('!!! Device was not Found with %s Serial!!!'% device_serial, 'debug')		
-		raise cherrypy.HTTPRedirect("config_homematic")
+		raise cherrypy.HTTPRedirect("config_homeautomation")
 
 
 	@cherrypy.expose

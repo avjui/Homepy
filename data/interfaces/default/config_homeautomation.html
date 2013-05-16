@@ -133,15 +133,17 @@
 					<tbody align=center>
 						%for device in devicelist:
 							<%	
+							dcompany = device[0]
 							dtype = device[0]
-							dname = device[1]
-							dserial = device[2]
-							droom = device[3]
+							dname = device[2]
+							dserial = device[3]
+							droom = device[4]
 							%>
-								<tr><td>${dserial}</td>
+								<tr><td>${dcompany}</td>
+								    <td>${dserial}</td>
 								    <td>${dname}</td>
 								    <td>${droom}</td>
-								    <td>${dtype}</td>
+								    <td>${dtype}</td> 
 								    <td><select name="device_room" size="1" style="width:40px">
 									<option selected>ja</option>
 									<option>nein</option></td>

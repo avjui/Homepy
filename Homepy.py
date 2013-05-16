@@ -5,8 +5,9 @@
 import os
 import sys
 import locale
+import socket
 import time
-import threading
+import thread
 from optparse import OptionParser
 
 #cherrypy
@@ -106,10 +107,8 @@ def main():
          # Initial and start the Plugins
          log('Initial Plugins', 'info')
          plugins = pluginmgr.get_plugins()
-         print plugins
          for key in plugins:
               plugin = pluginmgr.get_plugins()[key]		
-              print key
               plugin().start()
          core.base.start()
          while True: time.sleep(100)
@@ -118,6 +117,9 @@ def main():
     except KeyboardInterrupt:
          log('Homepy is shutting down ....', 'info')
          cherrypy.engine.exit()
+         for key in plugins:
+              plugin = pluginmgr.get_plugins()[key]		
+              plugin().shutdown()
          sys.exit
     
 

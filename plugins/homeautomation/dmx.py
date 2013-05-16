@@ -1,4 +1,10 @@
-import os, sys
+#
+# -*- coding: <utf-8> -*-
+#
+
+import os
+import sys
+
 from core.PluginManager import Homeautomation
 
 class client(Homeautomation):

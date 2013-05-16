@@ -523,11 +523,11 @@ class DBFunction:
 		cursor.close()
 		return 
 
-	def Add(self, Table, Company='', Serial='', Name='', Type='', roomName='',Value='', ValueType=0, IP='', Username='', Password='', ApiKey='', hidden=1):
+	def Add(self, Table, Company='', Serial='', Name='', Type='device', roomName='',Value='', ValueType='UNKNOWN', IP='', Username='', Password='', ApiKey='', hidden=0):
 
 		self.i = 0
-		self.Type = Type
-		self.Serial = Serial
+		self.type = Type
+		self.serial = Serial
 		self.roomID = int(self.getCountID('devices', 'OrderID' ))
 		
 		self.value = Value
@@ -540,16 +540,8 @@ class DBFunction:
 
 		if Table == 'homeautomation':
 		
-			for self.serial in self.deviceSerial:
-				if not self.serial.endswith(':0'):
-					self.size = len(self.deviceSerial)
-					if self.size > 2:
-						self.i = self.i + 1
-						self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, DeviceName, DeviceSerial, IP, RoomName, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.deviceType, self.deviceName + "(" + str(self.i) + ")", self.serial, IP, self.roomName, ValueTypy, '0.0', hidden))
-					self.connection.commit()
-				else:
-					self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, DeviceName, DeviceSerial, IP, RoomName, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.deviceType, self.deviceName, self.serial, IP, self.roomName, ValueTypy, '0.0', hidden))
-					self.connection.commit()
+			self.cursor.execute('INSERT INTO homeautomation(OrderID, DeviceCompany, DeviceTyp, Name, DeviceSerial, IP, Room, ValueType, DeviceValue, DeviceVisible) VALUES(?,?,?,?,?,?,?,?,?,?)', (self.roomID ,Company, self.type, self.deviceName, self.serial, IP, self.roomName, ValueType, '0.0', hidden))
+			self.connection.commit()
 	
 		elif Table == 'multimedia':
 
@@ -583,9 +575,9 @@ class DBFunction:
 		else:
 			sql = "DELETE FROM %s WHERE IP = %s"% (Table, IP)
 
-		cursor.execute(sql)
-		connection.commit()
-		cursor.close()
+		self.cursor.execute(sql)
+		self.connection.commit()
+		self.cursor.close()
 		return 
 
 
@@ -601,7 +593,7 @@ class DBFunction:
 			elif company !='':
 				sql = "SELECT DeviceTyp , Name , DeviceSerial, Room, ValueType, DeviceValue, DeviceVisible FROM homeautomation WHERE DeviceCompany='%s'"% (company)
 			elif devicetype == 'interface':
-				sql = "SELECT  DeviceCompany, Name , DeviceSerial , Room, ValueType, DeviceValue, DeviceVisible, Room FROM homeautomation WHERE DeviceTyp='interface'"			
+				sql = "SELECT  DeviceCompany, DeviceTyp, Name , DeviceSerial , Room, ValueType, DeviceValue, DeviceVisible, Room FROM homeautomation WHERE DeviceTyp='interface'"			
 			else:
 				sql = "SELECT DeviceCompany, DeviceTyp , Name , DeviceSerial , ValueType, DeviceValue, DeviceVisible FROM homeautomation WHERE Room='%s'"% (roomName)
 		

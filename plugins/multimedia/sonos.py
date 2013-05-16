@@ -1,16 +1,21 @@
 #
 # -*- coding: <utf-8> -*-
 #
+
+#sys module
 import urllib2
 import os
 import thread
 import time
 import sqlite3
+import logging
 
+# lib module
 from lib.sonos.soco import SoCo
 from lib.sonos.soco import SonosDiscovery
 import lib.feedparser as feedparser
 
+# core module
 import core
 from core.Logger import log
 from core.PluginManager import Multimedia
@@ -21,14 +26,20 @@ from core.DBFunctions import DBFunction
 
 class Sonos(Multimedia):
 
-	sonos_devices = SonosDiscovery()
-	adding = True
-	SONOS_DB = os.path.join(core.PROG_DIR, 'sonos.db')
+	def __init__(self):
+		self.sonos_devices = SonosDiscovery()
+		self.adding = True
+		self.SONOS_DB = os.path.join(core.PROG_DIR, 'sonos.db')
+		self.cache_dir = os.path.join(core.PROG_DIR, 'data/cache')
+
+		#Set loggging for request-modul to 'WARNING'
+		self.requests_log = logging.getLogger("requests")
+		self.requests_log.setLevel(logging.WARNING)
+
 
 	def start(self):
 
 		self.manufactur = 'SONOS'
-		
 		for sonos in self._GetDeviceList():
 			self.name = sonos[0]
 			self.ip = sonos[1]			
@@ -66,7 +77,6 @@ class Sonos(Multimedia):
 		return self.result
 
 	def _BackgroundCheck(self):
-
 		thread.start_new_thread(self._UpdateSonosTable, ())
 		log('SONOS background update thread was started', 'debug') 
 
@@ -81,15 +91,15 @@ class Sonos(Multimedia):
 
 		
 
-		log('Function [GetDeviceList: %s ]'% (self.info.items()), 'debug')
+		#log('Function [GetDeviceList: %s ]'% (self.info.items()), 'debug')
 		return self.info.items()
 
 	def _GetTrackInfo(self):
 
 		self.art = {}
 		sonoslist = self._GetDeviceList()
-		#try:
-		for sonos in sonoslist:
+		try:
+			for sonos in sonoslist:
 
 				sonosdevice = SoCo(sonos[1])
 				self.track = sonosdevice.get_current_track_info()
@@ -98,7 +108,7 @@ class Sonos(Multimedia):
 
 
 				self.album_art_url = self.track['album_art'].encode('utf-8')
-				log('Album cover : %s' % self.album_art_url, 'debug')
+				#log('Album cover : %s' % self.album_art_url, 'debug')
 				try:
 					self.album_artist = self.track['artist'].encode('utf-8')
 				except:
@@ -151,7 +161,7 @@ class Sonos(Multimedia):
 
 				
 				# Cache the file
-				filename = "/mnt/Media/Downloads/Homematic/data/cache/%s.jpg"% (sonos[0])
+				filename = "%s/%s.jpg"% (self.cache_dir, sonos[0])
 
 				try:
 					f = open(filename,'wb')
@@ -164,9 +174,10 @@ class Sonos(Multimedia):
 					
 				self.art[sonos[0]] = sonos[0], sonos[1], self.album_art_url, self.title, self.album, self.album_artist, self.duration, self.position, self.volume
 				
-		#except:
-		#	return 
-		log('Function [GetTrackInfo : %s ]'% (self.art), 'debug')
+		except Exception as e:
+			print e
+			 
+		#log('Function [GetTrackInfo : %s ]'% (self.art), 'debug')
 		return self.art
 
 	def _CreateSonosTable(self, devices):

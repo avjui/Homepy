@@ -1,3 +1,7 @@
+#
+# -*- coding: <utf-8> -*-
+#
+
 import os
 import sys
 
@@ -99,19 +103,29 @@ class Homeautomation(_Plugin):
 		"""
 		return
 
-	def add(self):
+
+	def add(self, serial):
 		"""  	This function will be call to add a devices		
 		
-			@param deviceCompany	       name of manufactor
-			@param devicename           name of device
-			@param devicetype           type of device ex. SWITCH
-			@param deviceseriel         serialnummber of device
-			@param deviceIP             ip of device
-			@param deviceroom           name of the room where the device stay
-			@param DeviceValue          value of device
-			@param Visible              0 -> false or 1 -> true 
+			@param serial               serialnummber of device
+			
+			There shoud be return a dict with following key's
+
+			deviceseriel         serialnummber of device or list of devices
+			devicename           can by the industrial name of the device
+			devicetype           type of device ex. SWITCH
+
 		"""
-		return True
+
+		self.data = [{ 
+				'deviceserial' : '',
+				'config' : [
+				{
+					'devicename' : ' ',
+					'devicetype' : ' ',
+					}]
+				}]
+		return self.data
 
 
 	def remove(self):
@@ -152,6 +166,14 @@ class Homeautomation(_Plugin):
 		"""
 		self.devices = {}
 		return self.device
+
+	def shutdown(self):
+		"""
+		This function will be call at shutdown.
+		It can be used to stop a eventserver 
+		or same other backgroundprocesses 
+		"""
+		return True
 
 
 class Multimedia(_Plugin):
@@ -215,6 +237,14 @@ class Multimedia(_Plugin):
 
 		return self.info
 
+	def shutdown(self):
+		"""
+		This function will be call at shutdown.
+		It can be used to stop a eventserver 
+		or same other backgroundprocesses 
+		"""
+		return True
+
 class Notification(_Plugin):
 
  	def start(self):
@@ -228,6 +258,14 @@ class Notification(_Plugin):
 	def send_message(self):
 		return True
 
+
+	def shutdown(self):
+		"""
+		This function will be call at shutdown.
+		It can be used to stop a eventserver 
+		or same other backgroundprocesses 
+		"""
+		return True
 
 class Web(_Plugin):
 
@@ -243,6 +281,13 @@ class Web(_Plugin):
 		self.webdata = {}
 		return self.data
 
+	def shutdown(self):
+		"""
+		This function will be call at shutdown.
+		It can be used to stop a eventserver 
+		or same other backgroundprocesses 
+		"""
+		return True
 
 pluginmgr = PluginMgr()
 

@@ -6,32 +6,25 @@ from lib.configobj import ConfigObj
 import core
 import core.Logger 
 
-class Config:
 
-	def CheckSection(self, sec):
-		""" Check if INI section exists, if not create it """
-		try:
-			core.CFG[sec]
-			return True
-		except:
-			core.CFG[sec] = {}
-			return False
+class Config(object):
+
 
 	################################################################################
 	# Check_setting_int                                                            #
 	################################################################################
 	def check_setting_int(self, config, cfg_name, item_name, def_val):
 		try:
-			my_val = int(config[cfg_name][item_name])
+			self.my_val = int(config[cfg_name][item_name])
 		except:
-			my_val = def_val
+			self.my_val = def_val
 		try:
-			config[cfg_name][item_name] = my_val
+			config[cfg_name][item_name] = self.my_val
 		except:
 			config[cfg_name] = {}
-			config[cfg_name][item_name] = my_val
-		#log(item_name + " -> " + str(my_val), 'debug')
-		return my_val
+			config[cfg_name][item_name] = self.my_val
+		#log("%s -> %s" %(item_name, my_val), 'debug')
+		return self.my_val
 
 
 	################################################################################
@@ -39,20 +32,20 @@ class Config:
 	################################################################################
 	def check_setting_str(self, config, cfg_name, item_name, def_val, log=True):
 		try:
-			my_val = config[cfg_name][item_name]
+			self.my_val = config[cfg_name][item_name]
 		except:
-			my_val = def_val
+			self.my_val = def_val
 		try:
-			config[cfg_name][item_name] = my_val
+			config[cfg_name][item_name] = self.my_val
 		except:
 			config[cfg_name] = {}
-			config[cfg_name][item_name] = my_val
+			config[cfg_name][item_name] = self.my_val
 
 		#if log:
-		#    log(item_name + " -> " + my_val, 'debug')
+		#    log(item_name + " -> " + self.my_val, 'debug')
 		#else:
 		#    log(item_name + " -> ******", 'debug')
-		#return my_val
+		return self.my_val
 
 
 
@@ -61,14 +54,13 @@ class Config:
 
 	
 		# Make sure all the config sections exist
-		self.CheckSection('General')
-		self.CheckSection('Syssetting')
+		core.CFG.get('General', "General")
+		core.CFG.get('Syssetting', "Syssetting")
 
  
 		try:
-			core.HTTP_PORT = self.check_setting_int(core.CFG, 'General', 'http_port', 8989)
+			core.HTTP_PORT = check_setting_int(core.CFG, 'General', 'http_port', 8989)
 		except:
-			print " Port is 8989"
 			core.HTTP_PORT = 8989
             
 		if core.HTTP_PORT < 21 or core.HTTP_PORT > 65535:

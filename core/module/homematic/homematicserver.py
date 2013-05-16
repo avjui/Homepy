@@ -56,6 +56,7 @@ class EventServer():
 			self.s.register_multicall_functions()
 	
 			#Starting the Server
+	
 			log('Starting EventServer' , 'info')
 			self.s.serve_forever()
 			
