@@ -1,3 +1,7 @@
+#
+# -*- coding: <utf-8> -*-
+#
+
 import os
 import sys
 
@@ -15,8 +19,8 @@ def start():
 	cherrypy.config.update({
 				'log.screen':			False,
 				'server.thread_pool': 	10,
-				'server.socket_port': 	8989,
-				'server.socket_host': 	'0.0.0.0',
+				'server.socket_port': 	core.HTTP_PORT,
+				'server.socket_host': 	core.HTTP_HOST,
 				'engine.autoreload_on':	True,
 		})
 
@@ -51,13 +55,12 @@ def start():
 		},
 	}
     
-#	if core.HTTP_PASSWORD != "":
-#		conf['/'].update({
-#			'tools.auth_basic.on': True,
-#   		'tools.auth_basic.realm': 'homepy',
-#    		'tools.auth_basic.checkpassword':  cherrypy.lib.auth_basic.checkpassword_dict(
-#    				{core.HTTP_USERNAME:core.HTTP_PASSWORD})
-#		})
+	if core.HTTP_PASSWORD != "":
+		conf['/'].update({
+			'tools.auth_basic.on': True,
+	   		'tools.auth_basic.realm': 'homepy',
+    			'tools.auth_basic.checkpassword':  cherrypy.lib.auth_basic.checkpassword_dict({core.HTTP_USERNAME:core.HTTP_PASSWORD})
+		})
 		
 
 	# Prevent time-outs

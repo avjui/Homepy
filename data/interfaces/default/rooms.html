@@ -1,9 +1,9 @@
 <%inherit file="base.html"/>
+
 <%!
-	from core.DBFunctions import DBFunction
+from core.DBFunctions import DBFunction
 
 %>
-
 <%def name="body()">
 	<div class="container" id="container">     
 	<ul class="tabs">
@@ -29,21 +29,55 @@
 		<p>		 
 		<lable><h1><u>${rname}</u></h1></lable>
 		<%
-			list = DBFunction().GetDeviceList(rname)
+			devicelist = DBFunction().GetList('homeautomation', devicetype='device', roomName=rname)
 		%>
-		%for device in list:
+		%for device in devicelist:
 			<%
-				dtype = device[0]
-				dname = device[1]
-				dserial = device[2]
-				dcserial = device[2].replace(':', '-')
-				dvalue = device[4]
+				print device
+				dtype = device[4]
+				dname = device[2]
+				dserial = device[3]
+				dcserial = device[3].replace(':', '-')
+				droom = device[4]
+				dvalue = device[5]
 			%>
 		<table cellpadding="5">
 			<tbody align=center border="1">
 			  	<tr>
 					% if dtype == 'SWITCH':
-						${next.switch()}
+
+						<%namespace name='switch' file='switch.html' />
+
+						<td style="width:550px" align=left>${dname}</td>
+						<td><img  id="lamp-${dcserial}" class="lamp-${dcserial}" src="images/lamps/off.png" /></td>
+						<td class="statusbutton" >
+							<img id="switch-${dcserial}" class="switch-${dcserial}" src="images/lamps/switch_on_litle.png" />
+						</td>
+						<script type="text/javascript">
+
+							if ( "${dvalue}" == 'True') {
+								$('#switch-${dcserial}').attr('src', 'images/lamps/switch_on_litle.png?'+ new Date().getTime())
+								$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png?'+ new Date().getTime());									
+							} else {
+								$('#switch-${dcserial}').attr('src', 'images/lamps/switch_off_litle.png?'+ new Date().getTime())
+								$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png?'+ new Date().getTime());	
+							}								
+							$('#switch-${dcserial}').click(function(){
+								$.get("functionHomatic", { device_serial:"${dserial}", device_type:"STATE" });
+									});
+									$(function(){
+										$(".switch-${dcserial}").live('click', function() {
+											if ($(this).attr("class") == "switch-${dcserial}") {
+												this.src = this.src.replace("off","on");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/on.png');
+											} else {
+												this.src = this.src.replace("on","off");
+												$('#lamp-${dcserial}').attr('src', 'images/lamps/off.png');
+												}
+											$(this).toggleClass("on");
+											});
+										});
+						</script>
 					% else:
 						<td style="width:4000px" align=left>${dname}</td>
 						<td class="statusbutton-dimmer" >

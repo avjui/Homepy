@@ -1,3 +1,7 @@
+#
+# -*- coding: <utf-8> -*-
+#
+
 import os
 import sys
 
@@ -67,7 +71,7 @@ class Config(object):
 			core.HTTP_PORT = 8989
             
 		try:
-			core.HTTP_HOST = self.check_setting_str(core.CFG, 'General', 'http_host', '0.0.0.0')
+			core.HTTP_HOST = self.check_setting_str(core.CFG, 'General', 'http_host', '0.0.0.0').encode('utf-8')
 		except:
 			core.HTTP_HOST = '0.0.0.0'
 	

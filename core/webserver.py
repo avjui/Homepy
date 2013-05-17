@@ -113,6 +113,9 @@ class WebInterface():
 	def rooms(self):
 		db = DBFunctions.DBFunction
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
+		#self.devicelist = self.db().GetList('homeautomation', devicetype='device')
+
+		#print self.devicelist
 		return serve_template(templatename="rooms.html", title="Rooms", roomlist=roomlist)
 
 
