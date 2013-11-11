@@ -1,0 +1,24 @@
+<%inherit file="base.html"/>
+
+<%def name="body()">
+
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
+	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
+
+       <table>
+	%for weblist in weblists:
+              <div class="cam" id="cam">
+		<label><b>${weblist[1]}</b></label>
+			<tbody>
+				<div class="image" id="image">
+					<img src=${weblist[2]} width="200" height="200" border="5" alt="webcam picture" />
+				</div>
+			<tbody>
+		</div>
+       %endfor
+	</table>
+
+</%def>

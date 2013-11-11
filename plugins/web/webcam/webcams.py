@@ -14,6 +14,9 @@ class cam(Web):
 
 	name = 'Cams'
 	type = 'web'
+	config = [{ 'config_site': 'config_cam.html',
+                   'main_site': 'cam.html',
+                }]		      
 
 	def UpdateCamPicture(self, camIP, camName):
 

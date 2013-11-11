@@ -7,8 +7,15 @@ import sys
 
 from core.PluginManager import Homeautomation
 
-class client(Homeautomation):
 
+name = 'DMX'
+type = 'homeautomation'
+config = [{
+    	   'name': 'automation',
+	   'order': 102,
+	  }]
+
+class client(Homeautomation):
 
 	def get_name(self):
 		return self.name

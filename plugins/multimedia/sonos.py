@@ -26,6 +26,8 @@ from core.DBFunctions import DBFunction
 
 class Sonos(Multimedia):
 
+	name = 'Sonos'
+
 	def __init__(self):
 		self.sonos_devices = SonosDiscovery()
 		self.adding = True

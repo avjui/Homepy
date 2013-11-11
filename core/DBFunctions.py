@@ -472,7 +472,7 @@ class DBFunction:
 		connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		cursor = connection.cursor()
 
-		sql = "INSERT INTO cams (CamIP, CamName, CamRoom) VALUES('%s','%s', '%s')"% (camIP, camName, roomName)
+		sql = "INSERT INTO web (CamIP, CamName, CamRoom) VALUES('%s','%s', '%s')"% (camIP, camName, roomName)
 		
 		cursor.execute(sql)
 		connection.commit()
@@ -555,23 +555,32 @@ class DBFunction:
 
 		elif Table == 'web':
 
-			self.sql = "INSERT INTO web (IP, Name, Username, Password, ApiKey, Room) VALUES('%s','%s', '%s')"% (IP, self.deviceName, Username, Password, ApiKey, self.roomName)
+			self.sql = "INSERT INTO web (IP, Name, Username, Password, ApiKey, Room) VALUES('%s','%s','%s','%s','%s','%s')"% (IP, self.deviceName, Username, Password, ApiKey, self.roomName)
 			self.cursor.execute(self.sql)
 			self.connection.commit()
 
+		elif Table == 'room':
+
+			sql = "INSERT INTO rooms (OrderID, RoomName) VALUES(%s,'%s')"% (orderID, self.roomName)
+			self.cursor.execute(self.sql)
+			self.connection.commit()
 		
 
 		self.cursor.close()
 		return True
 
 
-	def Remove(self, Table, Serial= '', IP=''):
+	def Remove(self, Table, Serial= '', IP='', roomName=''):
 
 		self.connection = sqlite3.connect(core.DB_FILE, timeout=20)
 		self.cursor = self.connection.cursor()
 
 		if Table == 'homeautomation':
 			sql = "DELETE FROM %s WHERE DeviceSerial = %s"% (Table, Serial)
+
+		elif Table == 'rooms':
+			sql = "DELETE FROM %s WHERE RoomName = %s"% (Table, roomName)
+
 		else:
 			sql = "DELETE FROM %s WHERE IP = %s"% (Table, IP)
 

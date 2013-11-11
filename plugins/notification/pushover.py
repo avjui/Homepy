@@ -9,6 +9,7 @@ from core.PluginManager import Notification
 
 class Pushover(Notification):
 
+	name = 'Pushover'
 
 	def get_name(self):
 		return self.name

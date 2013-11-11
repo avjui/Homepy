@@ -2,6 +2,7 @@ import os
 import cherrypy
 import threading
 import json
+import inspect
 
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -25,8 +26,17 @@ def serve_template(templatename, **kwargs):
 
 	interface_dir = os.path.join(str(core.PROG_DIR), 'data/interfaces/')
 	template_dir = os.path.join(str(interface_dir), 'default')
-	
-	_hplookup = TemplateLookup(directories=[template_dir])
+
+	template_list = [template_dir]
+	#Plugins custom htmls
+	plugins = pluginmgr.get_plugins()
+	for key in plugins:
+		plugin = pluginmgr.get_plugins()[key] 		
+		path = inspect.getmodule(plugin).__file__
+		template = os.path.join(os.path.dirname(path), "interface")
+		template_list.append(template)
+              
+	_hplookup = TemplateLookup(directories=template_list)
 	
 	try:
 		template = _hplookup.get_template(templatename)
@@ -133,6 +143,14 @@ class WebInterface():
 		else:
 			raise cherrypy.HTTPRedirect("config_sonos")
 
+	@cherrypy.expose
+	def web(self):
+		db = DBFunctions.DBFunction
+		self.roomlist = DBFunctions.DBFunction().GetRoomsList()
+		self.weblist = self.db().GetList('web')
+
+		print self.weblist
+		return serve_template(templatename="base_web.html", title="Web", roomlist=self.roomlist, weblists=self.weblist)
 
 	@cherrypy.expose
 	def addInterface(self, plugin, interface_serial, interface_ip, interface_name):
@@ -302,13 +320,13 @@ class WebInterface():
 	@cherrypy.expose
 	def addCam(self, cam_ip, cam_name, room_name):
 		db = DBFunctions.DBFunction
-		DBFunctions.DBFunction().AddCam(cam_ip, cam_name, room_name)		
-		raise cherrypy.HTTPRedirect("config_cams")
+		DBFunctions.DBFunction().Add('web',IP=cam_ip, Name=cam_name, roomName=room_name)		
+		raise cherrypy.HTTPRedirect("config_web")
 
 
 	@cherrypy.expose
 	def removeCam(self, cam_ip):	
 		db = DBFunctions.DBFunction
-		db().RemoveCam(cam_ip)
-		raise cherrypy.HTTPRedirect("config_cams")
+		db().Remove('web', IP=cam_ip)
+		raise cherrypy.HTTPRedirect("config_web")
 		
