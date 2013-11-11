@@ -60,31 +60,32 @@ class PluginMgr(object):
         for (pdir, loaded) in self.plugin_dirs.iteritems():
             if loaded: continue
 
-            sys.path.insert(0, pdir)
-            for mod in [x[:-3] for x in os.listdir(pdir) if x.endswith('.py')]:
-                if mod and mod != '__init__':
-                    if mod in sys.modules:
-                        log('Module %s already exists, skip' % mod, 'info')
-                    else:
-                        try:
-                            pymod = __import__(mod)
-                            splitted = mod.split('.')
-                            self.plugin_dirs[pdir] = True
-                            log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
-                            self.plugins = DBFunction().GetList('plugins')
-                            for p in self.plugins:
-                                 if p[1] == mod.upper():
-                                    self.adding = False
-                                    break
-                                 else:
-                                    self.adding = True
+            for root,dirs,mod in os.walk(pdir):
+                sys.path.insert(0, root)            
+                for mod in [x[:-3] for x in os.listdir(root) if x.endswith('.py')]:
+                    if mod and mod != '__init__':
+                        if mod in sys.modules:
+                            log('Module %s already exists, skip' % mod, 'info')
+                        else:
+                            try:
+                                pymod = __import__(mod)
+                                splitted = mod.split('.')
+                                self.plugin_dirs[pdir] = True
+                                log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
+                                self.plugins = DBFunction().GetList('plugins')
+                                for p in self.plugins:
+                                     if p[1] == mod.upper():
+                                        self.adding = False
+                                        break
+                                     else:
+                                       self.adding = True
 
-                            if self.adding:
-                                 DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
-                        except ImportError, e:
-                            log ('Loading failed, skip plugin %s/%s' % (os.path.basename(pdir), mod), 'error')
+                                if self.adding:
+                                     DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
+                            except ImportError, e:
+                                log ('Loading failed, skip plugin %s/%s' % (os.path.basename(root), mod), 'error')
 
-            del(sys.path[0])
+                del(sys.path[0])
 
 
     def get_plugins(self):

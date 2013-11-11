@@ -17,7 +17,7 @@ def start():
 
 
 	cherrypy.config.update({
-				'log.screen':			False,
+				'log.screen':			True,
 				'server.thread_pool': 	10,
 				'server.socket_port': 	core.HTTP_PORT,
 				'server.socket_host': 	core.HTTP_HOST,

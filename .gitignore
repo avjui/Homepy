@@ -4,6 +4,7 @@
 *.db
 data/cache/*.jpg
 config.ini
+plugins/homeautomation/homematic.test
 
 #  Compiled source   #
 ######################
