@@ -26,7 +26,12 @@ from core.DBFunctions import DBFunction
 
 class Sonos(Multimedia):
 
-	name = 'Sonos'
+	name = 'sonos'
+	type = 'multimedia'
+	config = {
+  		    'main_page' : 'sonos.html',
+		    'config_page' : 'config_sonos.html'
+		  }
 
 	def __init__(self):
 		self.sonos_devices = SonosDiscovery()
@@ -257,4 +262,8 @@ class Sonos(Multimedia):
 			self.data[self.device[1]] = self.resultdic 
 
 		self.cursor.close()
-		return self.data
+		self.mediainfo = { 'plugin' : self.name,
+				      self.device[1] : self.resultdic
+				   }
+					
+		return self.mediainfo

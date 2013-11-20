@@ -1,0 +1,128 @@
+		<%
+			i=0
+		%>
+		%for trackinfolist in trackinfolists:	
+			%for key,devices in trackinfolist.iteritems():
+				<%
+					if key != "plugin":
+						i = i + 500
+						mediatype = trackinfolist[key]['mediatyp']
+						devicename = trackinfolist[key]['devicename']
+						deviceip = trackinfolist[key]['deviceip']
+						if mediatype == "audio":
+							cover = trackinfolist[key]['cover']
+							title = trackinfolist[key]['title']
+							album = trackinfolist[key]['album']		
+							artist = trackinfolist[key]['artist']
+							duration = trackinfolist[key]['duration']
+							position = trackinfolist[key]['position']
+							volume = trackinfolist[key]['volume']
+							coverid = trackinfolist[key]['deviceip'].replace('.', '')
+						time = 4000# + i
+					else:
+						continue
+
+				%>			
+		
+		<div class="sonos" name ="sonos" align=center>
+		 	<table>
+			<tr><td>		
+			<div class="image" id="image">
+				<img src=${cover} id="${coverid}" alt="Album Art" height="150" width="150">
+				<div class="reflection">
+					<img src=${cover} id="${coverid}-1" alt="Album Art" height="150" width="150"/>
+					<div class="overlay"></div>
+				</div>
+			</div>
+			<div class="control">
+				<img src=images/media/play.png id="play-${devicename}" height="32" width="32"/>
+				<img src=images/media/pause.png id="pause-${devicename}" height="32" width="32"/>
+				<img src=images/media/stop.png id="stop-${devicename}" height="32" width="32"/>
+				<img src=images/media/first.png id="rew-${devicename}" height="32" width="32"/>
+				<img src=images/media/last.png id="fwd-${devicename}" height="32" width="32"/>
+			</div>	
+			<div class="volume" >
+				<div class="slider" id="volume-${coverid}"></div>
+			</div>
+			</td><td>
+			<table  class="info" align=left>
+					<caption><h2><u>${devicename}</u></h2></caption>
+						<tr><th align=left border="0">Track</th></tr>
+						<tr><td id="${coverid}-title" style="width:250px">${title}</td></tr>
+						<tr><th align=left>Album</th></tr>
+						<tr><td id="${coverid}-album" style="width:150px">${album}</td>
+						<tr><th align=left>Artist</th></tr>
+						<tr><td id="${coverid}-artist" style="width:150px">${artist}</td>
+				</table>
+			</td></tr>
+			</table>
+		<script type="text/javascript">
+			// Update the cover
+			$(document).ready(function() {
+				var title = $("#${coverid}-title").text()
+				window.setInterval(function(){
+				$.ajax({
+					type: 'POST',
+					dataType: 'json',
+					url: 'functionMultimedia',
+					data: 'device_name=${devicename}&function=getcover&current_title='+$("#${coverid}-title").text(),
+					cache: true,
+					success: function(result) {
+						if (result == null) 
+							return
+						else{
+							$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
+							$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
+							$('#${coverid}-title').text(result[1]);
+							$('#${coverid}-album').text(result[2]);
+							$('#${coverid}-artist').text(result[3]);
+							}
+						},
+					});
+			}, ${time});
+			$(function(){
+					var slidervalue = "20"
+					$("#volume-${coverid}").slider({
+									range:"min",
+									min:-1,
+									value: slidervalue,
+									max:100,
+									//Slider Event
+									slide: function(event, ui) { 
+									//When the slider is sliding
+									slidervalue  = $("#volume-${coverid}").slider('value');
+										},
+									change: function(event, ui) {
+										$.get("functionMultimedia", { device_ip:"${deviceip}", function:"volume", value : slidervalue });
+										},
+								});
+					});
+
+			});
+
+			// Send th action for the player	
+			$('#play-${devicename}').click(function(){
+				$.get("functionMultimedia", { device_ip:"${deviceip}", function:"play" }).done(function(data) {
+			});
+			});
+
+			$('#pause-${devicename}').click(function(){
+			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"pause" });
+			});
+
+			$('#stop-${devicename}').click(function(){
+			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"stop" });
+			});
+
+			$('#fwd-${devicename}').click(function(){
+			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"next" });
+			});
+
+			$('#rew-${devicename}').click(function(){
+			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"previous" });
+			});
+			
+		</script>
+		</div>
+		%endfor
+	%endfor

@@ -132,14 +132,19 @@ class WebInterface():
 	@cherrypy.expose
 	def multimedia(self):
 		self.multimedialist = []
+		self.htmlslist = []
 		self.roomlist = self.db().GetRoomsList()
 		for plugin in self.plugins_multimedia:
 			self.plugincls = pluginmgr.get_plugins()[plugin[1]]
-			self.data = self.plugincls().get_mediainfo()
-			self.multimedialist.append(self.data)
+			#print self.plugincls
+			self.metadata = self.plugincls().get_mediainfo()
+			self.html = self.plugincls().config
+			#print self.html['main_page']
+			self.multimedialist.append(self.metadata)
+			self.htmlslist.append(self.html)
 
 		if self.multimedialist != None:
-			return serve_template(templatename="multimedia.html", title="Multimediadevices", trackinfolists=self.multimedialist, roomlist=self.roomlist)
+			return serve_template(templatename="multimedia.html", title="Multimediadevices", htmlslist=self.htmlslist, trackinfolists=self.multimedialist, roomlist=self.roomlist)
 		else:
 			raise cherrypy.HTTPRedirect("config_sonos")
 
@@ -251,7 +256,7 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionSonos(self, zonen_ip='', function='', zone_name='', value='', current_title=''):
+	def functionMultimedia(self, device_ip='', function='', device_name='', value='', current_title=''):
 		self.data = []
 		db = DBFunctions.DBFunction		
 		if function == 'getcover':
@@ -259,7 +264,7 @@ class WebInterface():
 			for key,devices in trackinfolist.iteritems():
 				for device in devices:
 
-					if device[0] == zone_name:
+					if device[0] == device_name:
 
 						zonenip = device[1]
 						art = device[2]

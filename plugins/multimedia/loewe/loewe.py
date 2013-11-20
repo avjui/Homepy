@@ -5,16 +5,16 @@
 import os
 import sys
 
-from core.PluginManager import Homeautomation
+from core.PluginManager import Multimedia
 
-class client(Homeautomation):
+class client(Multimedia):
 
 	name = 'Loewe'
-	type = 'homeautomation'
-	config = [{
-  		    'name': 'automation',
-		    'order': 103,
-		  }]
+	type = 'multimedia'
+	config = {
+  		    'main_page': 'loewe.html',
+		    'config_page': 'config_html',
+		  }
 
 	def get_name(self):
 		return self.name

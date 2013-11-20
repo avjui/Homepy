@@ -3,130 +3,15 @@
 <%def name="body()">
 <%
 	i=0
+
 %>
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
 	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
-		%for trackinfolist in trackinfolists:	
-			%for key,devices in trackinfolist.iteritems():
-				<%
-					i = i + 500
-					mediatype = devices['mediatyp']
-					zonename = devices['devicename']
-					zonenip = devices['deviceip']
-					art = devices['cover']
-					title = devices['title']
-					album = devices['album']		
-					artist = devices['artist']
-					duration = devices['duration']
-					position = devices['position']
-					volume = devices['volume']
-					coverid = devices['deviceip'].replace('.', '')
-					time = 4000 + i
-				%>			
-		
-		<div class="sonos" name ="sonos" align=center>
-		 	<table>
-			<tr><td>		
-			<div class="image" id="image">
-				<img src=${art} id="${coverid}" alt="Album Art" height="150" width="150">
-				<div class="reflection">
-					<img src=${art} id="${coverid}-1" alt="Album Art" height="150" width="150"/>
-					<div class="overlay"></div>
-				</div>
-			</div>
-			<div class="control">
-				<img src=images/media/play.png id="play-${zonename}" height="32" width="32"/>
-				<img src=images/media/pause.png id="pause-${zonename}" height="32" width="32"/>
-				<img src=images/media/stop.png id="stop-${zonename}" height="32" width="32"/>
-				<img src=images/media/first.png id="rew-${zonename}" height="32" width="32"/>
-				<img src=images/media/last.png id="fwd-${zonename}" height="32" width="32"/>
-			</div>	
-			<div class="volume" >
-				<div class="slider" id="volume-${coverid}"></div>
-			</div>
-			</td><td>
-			<table  class="info" align=left>
-					<caption><h2><u>${zonename}</u></h2></caption>
-						<tr><th align=left border="0">Track</th></tr>
-						<tr><td id="${coverid}-title" style="width:250px">${title}</td></tr>
-						<tr><th align=left>Album</th></tr>
-						<tr><td id="${coverid}-album" style="width:150px">${album}</td>
-						<tr><th align=left>Artist</th></tr>
-						<tr><td id="${coverid}-artist" style="width:150px">${artist}</td>
-				</table>
-			</td></tr>
-			</table>
-		<script type="text/javascript">
-			// Update the cover
-			$(document).ready(function() {
-				var title = $("#${coverid}-title").text()
-				window.setInterval(function(){
-				$.ajax({
-					type: 'POST',
-					dataType: 'json',
-					url: 'functionSonos',
-					data: 'zone_name=${zonename}&function=getcover&current_title='+$("#${coverid}-title").text(),
-					cache: true,
-					success: function(result) {
-						if (result == null) 
-							return
-						else{
-							$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
-							$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
-							$('#${coverid}-title').text(result[1]);
-							$('#${coverid}-album').text(result[2]);
-							$('#${coverid}-artist').text(result[3]);
-							}
-						},
-					});
-			}, ${time});
-			$(function(){
-					var slidervalue = "20"
-					$("#volume-${coverid}").slider({
-									range:"min",
-									min:-1,
-									value: slidervalue,
-									max:100,
-									//Slider Event
-									slide: function(event, ui) { 
-									//When the slider is sliding
-									slidervalue  = $("#volume-${coverid}").slider('value');
-										},
-									change: function(event, ui) {
-										$.get("functionSonos", { zonen_ip:"${zonenip}", function:"volume", value : slidervalue });
-										},
-								});
-					});
 
-			});
-
-			// Send th action for the player	
-			$('#play-${zonename}').click(function(){
-				$.get("functionSonos", { zonen_ip:"${zonenip}", function:"play" }).done(function(data) {
-			});
-			});
-
-			$('#pause-${zonename}').click(function(){
-			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"pause" });
-			});
-
-			$('#stop-${zonename}').click(function(){
-			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"stop" });
-			});
-
-			$('#fwd-${zonename}').click(function(){
-			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"next" });
-			});
-
-			$('#rew-${zonename}').click(function(){
-			    $.get("functionSonos", { zonen_ip:"${zonenip}", function:"previous" });
-			});
-			
-		</script>
-		</div>
-		%endfor
+       %for html in htmlslist:
+			<%include file="${html['main_page']}"/>
 	%endfor
 </%def>

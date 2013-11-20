@@ -62,30 +62,35 @@ class PluginMgr(object):
 
             for root,dirs,mod in os.walk(pdir):
                 sys.path.insert(0, root)            
-                for mod in [x[:-3] for x in os.listdir(root) if x.endswith('.py')]:
-                    if mod and mod != '__init__':
-                        if mod in sys.modules:
-                            log('Module %s already exists, skip' % mod, 'info')
-                        else:
-                            try:
-                                pymod = __import__(mod)
-                                splitted = mod.split('.')
-                                self.plugin_dirs[pdir] = True
-                                log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
-                                self.plugins = DBFunction().GetList('plugins')
-                                for p in self.plugins:
-                                     if p[1] == mod.upper():
-                                        self.adding = False
-                                        break
-                                     else:
-                                       self.adding = True
+                for dir in dirs:
+                    lookdir = os.path.join(root, dir)
+                    sys.path.insert(0, lookdir)
+                    for mod in [x[:-3] for x in os.listdir(lookdir) if x.endswith('.py')]:
+                        if mod and mod != '__init__':
+                            if mod in sys.modules:
+                                log('Module %s already exists, skip' % mod, 'info')
+                            else:
+                                try:
+                                    pymod = __import__(mod)
+                                    splitted = mod.split('.')
+                                    self.plugin_dirs[pdir] = True
+                                    log("Plugin Found [Name] %s	[Path] %s"% (mod, pymod.__file__), 'info')
+                                    self.plugins = DBFunction().GetList('plugins')
+                                    for p in self.plugins:
+                                        if p[1] == mod.upper():
+                                            self.adding = False
+                                            break
+                                        else:
+                                            self.adding = True
 
-                                if self.adding:
-                                     DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
-                            except ImportError, e:
-                                log ('Loading failed, skip plugin %s/%s' % (os.path.basename(root), mod), 'error')
+                                    if self.adding:
+                                         DBFunction().AddPlugin(mod.upper(), pymod.__file__.split('/')[1])
+                                except ImportError, e:
+                                    log ('Loading failed, skip plugin %s/%s Error: %s' % (os.path.basename(lookdir), mod ,e), 'error')
 
                 del(sys.path[0])
+                log ('Break Mod:%s - %s'% (mod, lookdir) ,'info')
+                break
 
 
     def get_plugins(self):
@@ -206,18 +211,20 @@ class Multimedia(_Plugin):
 		""" This function return a dict with media informations
 		    This dict must contain few things
 
-		    First mediatyp : 'audio' or 'video'
+		    First you need plugin and specifiate name (f.e. ip)
 
 		    For audio
-			interpret :
-		       album :
-			title :
+		       mediatyp : 'audio'
+			album :
+			artist :
 			cover :
 			duration :
 			position: 
+			title :
 			volume :
 
 		   For video
+			mediatyp : 'video'
 			title :
 			descritpion :
 			cover :
@@ -226,15 +233,20 @@ class Multimedia(_Plugin):
 			volume :				
 		"""
 
-		self.info({
-			     'mediatyp' : 'audio',
-			     'interpret' : ' ',
-			     'album' : ' ',
-			     'title' : ' ',
-			     'cover' : 'nocover.png',
-			     'timestamp' : ('00.00.00', '00.00.00'),
-			     'volume' : 0,
-			})	
+		self.info = {'plugin' : 'unknown',
+			      'name' : {
+					  'mediatyp' : u'audio',
+					  'album' : u' ',
+					  'artist' : u' ',
+				 	  'cover' : u'nocover.png',
+					  'devicename' : u' ',
+					  'deviceip' : u' ',
+					  'duration' : u'0:00:00',
+					  'position' : u'0:00:00',
+					  'title' : u' ',
+					  'volume' : u'0',
+					 }
+				}	
 
 		return self.info
 
