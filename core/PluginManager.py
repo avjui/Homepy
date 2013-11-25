@@ -22,12 +22,6 @@ class _Plugin(object):
             else:
                 if attrs['__module__'] != 'core.PluginManager':
                      modul = attrs['__module__'].upper()
-                     # will be added later
-                     #try:
-                         # will be added later
-                     #    self.config = attrs['config']	
-                     #except:
-                     #    log("No config found for %s plugin "% (modul), 'info')
                      cls.plugins[modul] = cls
 
 
@@ -89,7 +83,6 @@ class PluginMgr(object):
                                     log ('Loading failed, skip plugin %s/%s Error: %s' % (os.path.basename(lookdir), mod ,e), 'error')
 
                 del(sys.path[0])
-                log ('Break Mod:%s - %s'% (mod, lookdir) ,'info')
                 break
 
 
@@ -99,7 +92,7 @@ class PluginMgr(object):
         return _Plugin.get_plugins()
 
 
-class Homeautomation(_Plugin):
+class _BasePlugin(_Plugin):
 
  	def start(self):
 		"""	
@@ -143,6 +136,18 @@ class Homeautomation(_Plugin):
 		return True
 
 
+	def shutdown(self):
+		"""
+		This function will be call at shutdown.
+		It can be used to stop a eventserver 
+		or same other backgroundprocesses 
+		"""
+		return True
+
+
+class Homeautomation(_BasePlugin):
+
+
 	def switch(self):
 		"""	
 		This function will be toggle the device
@@ -173,39 +178,18 @@ class Homeautomation(_Plugin):
 		self.devices = {}
 		return self.device
 
-	def shutdown(self):
-		"""
-		This function will be call at shutdown.
-		It can be used to stop a eventserver 
-		or same other backgroundprocesses 
-		"""
-		return True
 
 
-class Multimedia(_Plugin):
+class Multimedia(_BasePlugin):
 
- 	def start(self):
+	def action(self, plugin_name, **kwargs):
 		"""
-		This function will be call at start.
-		With this function you can call startups for example start
-		a eventserver or same other backgroundprocesses 
-		"""
-		return
+		@param plugin_name                 name of the plugin how was specified in plugin class as name
 
-	def action(self, ip, a):
-		"""
-		@param ip                          ip of device
-		@param a                           valid action are (play, stop, pause, forrword, rewind, volume)
-		@param value                       e.x. for volume 
 		"""
 
 		return True
 
-	def add(self):
-		return True
-
-	def remove(self):
-		return True
 
 	def get_mediainfo(self):
 		""" This function return a dict with media informations
@@ -250,57 +234,24 @@ class Multimedia(_Plugin):
 
 		return self.info
 
-	def shutdown(self):
-		"""
-		This function will be call at shutdown.
-		It can be used to stop a eventserver 
-		or same other backgroundprocesses 
-		"""
-		return True
 
-class Notification(_Plugin):
 
- 	def start(self):
-		"""
-		This function will be call at start.
-		With this function you can call startups for example start
-		a eventserver or same other backgroundprocesses 
-		"""
-		return
+class Notification(_BasePlugin):
 
 	def send_message(self):
 		return True
 
 
-	def shutdown(self):
-		"""
-		This function will be call at shutdown.
-		It can be used to stop a eventserver 
-		or same other backgroundprocesses 
-		"""
-		return True
 
-class Web(_Plugin):
-
- 	def start(self):
-		"""
-		This function will be call at start.
-		With this function you can call startups for example start
-		a eventserver or same other backgroundprocesses 
-		"""
-		return
+class Web(_BasePlugin):
 
 	def get_data(self):
 		self.webdata = {}
 		return self.data
 
-	def shutdown(self):
-		"""
-		This function will be call at shutdown.
-		It can be used to stop a eventserver 
-		or same other backgroundprocesses 
-		"""
-		return True
+	def send_data(self):
+		self.webdata = {}
+		return self.data
 
 pluginmgr = PluginMgr()
 

@@ -1,97 +1,29 @@
 <%inherit file="base.html"/>
 
 <%def name="body()">
-	<div class="config_xbmc" align=center>
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
 	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
-	<link rel="stylesheet" href="css/config_xbmc.css" type="text/css" media="screen"/>
-		<p>		 
-				<lable><h1><u>${title}</u></h1></lable>
-			<form action="addXbmc">
-			<table cellpadding="5">
-				<caption><h2><u>Add Multimedia Device</u></h2></caption>
-					<tr>
-						<td>
-							<label><b>Device Type</b></label>
-							<br />
-							<select name="Plugin" size="1" style="width:200px">
-								<option selected>---</option>
-								%for plugin in pluginlist:
-									<%
-										pluginname = plugin[1]
-									%>
-									<option>${pluginname}</option>
-								%endfor
-							</select>
-						</td>
-						<td>
-							<label><b>IP</b></label>
-							<br />
-							<input style="width:120px" type="text" name="xbmc_ip" id="xbmc_ip" value='' />
-						</td>
-						<td>
-							<label><b>Name</b></label>
-							<br />
-							<input style="width:175px" type="text" name="xbmc_name" id="xbmc_username" value='' />
-						</td>
-						<td>
-							<label><b>Username</b></label>
-							<br />
-							<input style="width:175px" type="text" name="xbmc_username" id="xbmc_username" value='' />
-						</td>
-						<td>
-							<label><b>Password</b></label>
-							<br />
-							<input style="width:175px" type="text" name="xbmc_password" id="xbmc_password" value='' />
-						</td>
-						<td>
-							<label><b>Device Standort</b></label>
-							<br />
-							<select name="xbmc_room" size="1" style="width:200px">
-								<option selected>---</option>
-								%for room in roomlist:
-									<%
-										rname = room[1]
-									%>
-									<option>${rname}</option>
-								%endfor
-							</select>
-						</td>
-						<td class="add_xbmc" >
-							<input style="width:60px" type="submit" value="Add">
-						</td>
-					</tr>
-				</table>
-			</form>
-		</p>
+	<link rel="stylesheet" href="css/config_sonos.css" type="text/css" media="screen"/>
+	<% print pluginlist %>
+	%for plugin in pluginlist:
+		<div class="container" id="container">     
+		<ul class="tabs">
+			<li><a href="#${plugin['name']}" >${plugin['name'].upper()}</a></li>
+        	</ul>
+		</div>
+	%endfor
+	<div class="config_sonos" id="${plugin['name']}" align=center>
+	<p>
+		<lable><h1><u>${title}</u></h1></lable>
+	%for plugin in pluginlist:
+		<% print plugin['config_page'] %>
+		%if plugin['config_page']:
+			<%include file="${plugin['config_page']}"/>
+		%endif
+	%endfor
+	</p>
 	</div>
-	<div id="xbmctable" class="xbmctable">
-		<p>
-		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
-					<thead>
-						<tr><th>Manufactur</th><th>IP</th><th>Name</th><th>Place</th><th>Action</th></tr>
-					</thead>
-					<tbody align=center>
-						%for device in devicelist:
-							<%	
-							name = device[2]
-							ip = device[1]
-							manufactur = device[0]
-							user = device[3]
-							password = device[4]
-							room = device[6]
-							%>
-						 <tr><td>${manufactur}</td><td>${ip}</td><td>${name}</td><td>${room}</td><td class="add_xbmc" ><input style="width:70px" type="button" onclick="location.href='removeXbmc?xbmc_ip=${ip}'" value="Remove"></td></tr>
-						%endfor
-					</tbody>
-				</table>
-			<script type="text/javascript">
-				$("#sort tbody").sortable().disableSelection();
-				
-			</script>
-		</p>
-	</div>
-
+	
 </%def>

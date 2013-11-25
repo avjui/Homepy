@@ -23,10 +23,7 @@ import core
 import core.base 
 from core.Config import Config
 from core.DBFunctions import DBFunction
-from core.DBFunctions import SonosDB
 from core.Logger import log
-#from core.module.homematic.homematicserver import EventServer
-#from core.module.homematic.homematic import HmXmlClasses
 
 
 from core.PluginManager import *
@@ -84,11 +81,6 @@ def main():
 
     core.CFG = ConfigObj(core.CONFIG_FILE, encoding='UTF8')
  
-    # Test for sonos DB if exist start updating the DB in background
-    #core.SONOS_DB_FILE = os.path.join(core.PROG_DIR, 'sonos.db')
-    #if os.path.isfile(core.SONOS_DB_FILE):
-          #cherrypy.process.plugins.Monitor(cherrypy.engine,SonosDB().UpdateSonosTable,5).subscribe()
-          #log("Background scan for sonos information was startet", 'info')
 
     # Check and read config 
     Config().Check()

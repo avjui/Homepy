@@ -11,25 +11,23 @@ from mako import exceptions
 import core
 from core.Helper import ParseTyps
 import core.DBFunctions as DBFunctions
-from core.DBFunctions import SonosDB
 from core.Config import Config
 from core.Logger import log
 from core.PluginManager import *
 
 # modules
-from core.module.sonos.sonos import Sonos
-from core.module.homematic.homematic import HmXmlClasses
-from core.module.homematic.homematicserver import EventServer
+#from core.module.homematic.homematic import HmXmlClasses
+#from core.module.homematic.homematicserver import EventServer
 
 
 def serve_template(templatename, **kwargs):
-
+	
+	plugins = pluginmgr.get_plugins()
 	interface_dir = os.path.join(str(core.PROG_DIR), 'data/interfaces/')
 	template_dir = os.path.join(str(interface_dir), 'default')
 
 	template_list = [template_dir]
 	#Plugins custom htmls
-	plugins = pluginmgr.get_plugins()
 	for key in plugins:
 		plugin = pluginmgr.get_plugins()[key] 		
 		path = inspect.getmodule(plugin).__file__
@@ -49,6 +47,7 @@ class WebInterface():
 
 	def __init__(self):
 		self.db = DBFunctions.DBFunction
+		self.plugins = pluginmgr.get_plugins()
 		self.plugins_homeautomation = self.db().GetList('plugins', type='homeautomation')
 		self.plugins_multimedia = self.db().GetList('plugins', type='multimedia')
 		self.plugins_notification = self.db().GetList('plugins', type='notification')
@@ -70,18 +69,18 @@ class WebInterface():
 	@cherrypy.expose
 	def config_homeautomation(self):
 		devicelist = self.db().GetList('homeautomation')
-		#interfacelist = self.db().GetList('homeautomation', devicetype='interface')	
-		interfacelist = {}
 		roomlist = self.db().GetRoomsList()
 		pluginlist = self.db().GetList('plugins', type='homeautomation')
-		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", interfacelist=interfacelist, devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
+		return serve_template(templatename="config_homeautomation.html", title="Homeautomation Config", devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
 
 
 	@cherrypy.expose
 	def config_multimedia(self):
+		
 		devicelist = self.db().GetList('multimedia')
 		roomlist = self.db().GetRoomsList()
-		pluginlist = self.db().GetList('plugins', type='multimedia')
+		pluginlist = self._getPluginConfig(self.plugins_multimedia)
+
 		return serve_template(templatename="config_multimedia.html", title="Multimedia Config", devicelist=devicelist, roomlist=roomlist, pluginlist=pluginlist)
 
 
@@ -106,10 +105,8 @@ class WebInterface():
 		db = DBFunctions.DBFunction
 		roomlist = DBFunctions.DBFunction().GetRoomsList()
 		scenelist = DBFunctions.DBFunction().GetSceneElements(None)
-		sonoslist = DBFunctions.DBFunction().GetSonosList()
-		camslist = DBFunctions.DBFunction().GetCamList()
-		devicelist = DBFunctions.DBFunction().GetDeviceList()
-		return serve_template(templatename="config_rooms.html", title="Rooms Config", roomlist=roomlist, scenelist=scenelist, devicelist=devicelist, sonoslist=sonoslist, camslist=camslist)
+		
+		return serve_template(templatename="config_rooms.html", title="Rooms Config", roomlist=roomlist, scenelist=scenelist, homeautomationlist=self.plugins_homeautomation, weblist=self.plugins_web, multimedialist=self.plugins_multimedia)
 
 
 	@cherrypy.expose
@@ -132,19 +129,17 @@ class WebInterface():
 	@cherrypy.expose
 	def multimedia(self):
 		self.multimedialist = []
-		self.htmlslist = []
+		self.htmllist = {}
 		self.roomlist = self.db().GetRoomsList()
+		print self.plugins_multimedia
 		for plugin in self.plugins_multimedia:
 			self.plugincls = pluginmgr.get_plugins()[plugin[1]]
-			#print self.plugincls
 			self.metadata = self.plugincls().get_mediainfo()
-			self.html = self.plugincls().config
-			#print self.html['main_page']
 			self.multimedialist.append(self.metadata)
-			self.htmlslist.append(self.html)
+			self.htmllist[self.metadata['plugin']] = self.plugincls().config['main_page']
 
 		if self.multimedialist != None:
-			return serve_template(templatename="multimedia.html", title="Multimediadevices", htmlslist=self.htmlslist, trackinfolists=self.multimedialist, roomlist=self.roomlist)
+			return serve_template(templatename="multimedia.html", title="Multimediadevices", htmllist=self.htmllist, trackinfolists=self.multimedialist, roomlist=self.roomlist)
 		else:
 			raise cherrypy.HTTPRedirect("config_sonos")
 
@@ -158,45 +153,31 @@ class WebInterface():
 		return serve_template(templatename="base_web.html", title="Web", roomlist=self.roomlist, weblists=self.weblist)
 
 	@cherrypy.expose
-	def addInterface(self, plugin, interface_serial, interface_ip, interface_name):
-		db = DBFunctions.DBFunction
-		self.data = self
-		DBFunctions.DBFunction().AddInterface(None, interface_serial, interface_ip, interface_name)
-		raise cherrypy.HTTPRedirect("config_homematic")
-
-
-	@cherrypy.expose
-	def removeInterface(self, interface_serial):
-		db = DBFunctions.DBFunction
-		DBFunctions.DBFunction().RemoveInterface(interface_serial)
-		raise cherrypy.HTTPRedirect("config_homematic")
-
-
-	@cherrypy.expose
-	def addDevice(self, plugin, device_serial, device_name, device_room):
-
-		self.plugincls = pluginmgr.get_plugins()[plugin]
-		self.data = self.plugincls().add(device_serial)
-		print self.data
-		if self.data:
-			log('Device found with %s Serial'% device_serial, 'debug')
-			for key, value in self.data.items():
-				self.device_child = key
-				self.device_type = value[1]
-				self.db().Add('homeautomation', Company=plugin, Name=device_name, ValueType=self.device_type, Serial=self.device_child, roomName=device_room)
+	def add(self, **kwargs):
+		if kwargs['Table'] == 'homeautomation' and kwargs['Type'] == 'device':
+			self.plugincls = pluginmgr.get_plugins()[kwargs['Company']]
+			self.data = self.plugincls().add(kwargs['Serial'])
+			if self.data:
+				log('Device found with %s Serial'% kwargs['Serial'], 'debug')
+				for key, value in self.data.items():			
+					kwargs['Serial'] = key
+					kwargs['ValueType'] = value[1]
+					db = DBFunctions.DBFunction
+					DBFunctions.DBFunction().Add(**kwargs)
+			else:
+				log('!!! Device was not Found with %s Serial!!!'% kwargs['Serial'], 'debug')
 		else:
-			log('!!! Device was not Found with %s Serial!!!'% device_serial, 'debug')		
+			DBFunctions.DBFunction().Add(**kwargs)
+		
 		raise cherrypy.HTTPRedirect("config_homeautomation")
 
 
 	@cherrypy.expose
-	def removeDevice(self, device_serial):
+	def remove(self, Table, Serial, Company):
 		db = DBFunctions.DBFunction
+		DBFunctions.DBFunction().Remove(Table, Serial)
+		raise cherrypy.HTTPRedirect("config_homeautomation")
 
-		HmXmlClasses().deleteHMDevice(device_serial)
-		DBFunctions.DBFunction().RemoveDevice(device_serial)
-
-		raise cherrypy.HTTPRedirect("config_homematic")
 
 
 	@cherrypy.expose
@@ -256,32 +237,15 @@ class WebInterface():
 
 
 	@cherrypy.expose
-	def functionMultimedia(self, device_ip='', function='', device_name='', value='', current_title=''):
-		self.data = []
-		db = DBFunctions.DBFunction		
-		if function == 'getcover':
-			trackinfolist = SonosDB().GetZoneInfo()
-			for key,devices in trackinfolist.iteritems():
-				for device in devices:
-
-					if device[0] == device_name:
-
-						zonenip = device[1]
-						art = device[2]
-						title = device[3]
-						album = device[4]		
-						artist = device[5]
-						self.data = art, title, album, artist, zonenip
-
-						# Check if track was changed
-						if current_title != title : 
-							return json.dumps(self.data)
-						else:
-							return
-		
+	def action(self, plugin_name, **kwargs):	
+		for key in self.plugins:
+			plugin = pluginmgr.get_plugins()[key]
+			if plugin().name == plugin_name:
+				self.data = plugin().action(**kwargs)
+		if type(self.data) == bool:
+			return
 		else:
-			Sonos().SonosFunctions(zonen_ip, function, value)
-			return 
+			return json.dumps(self.data) 
 
 
 	@cherrypy.expose
@@ -293,13 +257,11 @@ class WebInterface():
 	@cherrypy.expose
 	def removeSonos(self, device_name):	
 		db = DBFunctions.DBFunction
-		db().RemoveSonos(device_name)
 		raise cherrypy.HTTPRedirect("config_sonos")
 
 
 	@cherrypy.expose
-	def searchForSonos(self):
-		DBFunctions.DBFunction().AddSonos()		
+	def searchForSonos(self):		
 		raise cherrypy.HTTPRedirect("config_sonos")
 
 
@@ -318,7 +280,7 @@ class WebInterface():
 
 	@cherrypy.expose
 	def functionHomatic(self, device_serial, device_type , value=''):
-		HmXmlClasses().setValueToHMDevice(device_type, device_serial, value)
+		#HmXmlClasses().setValueToHMDevice(device_type, device_serial, value)
 		return
 
 		
@@ -334,4 +296,16 @@ class WebInterface():
 		db = DBFunctions.DBFunction
 		db().Remove('web', IP=cam_ip)
 		raise cherrypy.HTTPRedirect("config_web")
+
+	def _getPluginConfig(self, pluginlist):
+		self.htmlslist = []
+		self.roomlist = self.db().GetRoomsList()
+		for plugin in pluginlist:
+			self.plugincls = pluginmgr.get_plugins()[plugin[1]]
+			self.html = self.plugincls().config
+			self.html['name'] = self.plugincls().name
+			self.htmlslist.append(self.html)
+		print self.htmlslist
+		return self.htmlslist
+		
 		

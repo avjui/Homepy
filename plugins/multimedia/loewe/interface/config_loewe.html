@@ -1,0 +1,65 @@
+			<form action="addXbmc">
+			<table cellpadding="5">
+				<caption><h2><u>Add XBMC Server</u></h2></caption>
+					<tr>
+						<td>
+							<label><b>XBMC IP</b></label>
+							<br />
+							<input style="width:120px" type="text" name="xbmc_ip" id="xbmc_ip" value='' />
+						</td>
+						<td>
+							<label><b>Name</b></label>
+							<br />
+							<input style="width:175px" type="text" name="xbmc_name" id="xbmc_username" value='' />
+						</td>
+						<td>
+							<label><b>Username</b></label>
+							<br />
+							<input style="width:175px" type="text" name="xbmc_username" id="xbmc_username" value='' />
+						</td>
+						<td>
+							<label><b>Password</b></label>
+							<br />
+							<input style="width:175px" type="text" name="xbmc_password" id="xbmc_password" value='' />
+						</td>
+						<td>
+							<label><b>Device Standort</b></label>
+							<br />
+							<select name="xbmc_room" size="1" style="width:200px">
+								<option selected>---</option>
+								%for room in roomlist:
+									<%
+										rname = room[1]
+									%>
+									<option>${rname}</option>
+								%endfor
+							</select>
+						</td>						<td class="add_xbmc" >
+							<input style="width:60px" type="submit" value="Add">
+						</td>
+					</tr>
+				</table>
+			</form>
+	<div id="xbmctable" class="xbmctable">
+		<p>
+		<table id="interfacesort" class="grid" cellpadding="5" width=80% align=center >
+					<thead>
+						<tr><th>IP</th><th>Name</th><th>Place</th><th>Action</th></tr>
+					</thead>
+					<tbody align=center>
+						%for device in devicelist:
+							<%	
+							xip = device[1]
+							xname = device[0]
+							xroom = device[2]
+							%>
+						 <tr><td>${xip}</td><td>${xname}</td><td>${xroom}</td><td class="add_xbmc" ><input style="width:70px" type="button" onclick="location.href='removeXbmc?xbmc_ip=${xip}'" value="Remove"></td></tr>
+						%endfor
+					</tbody>
+				</table>
+			<script type="text/javascript">
+				$("#sort tbody").sortable().disableSelection();
+				
+			</script>
+		</p>
+	</div>

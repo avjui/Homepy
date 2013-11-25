@@ -3,7 +3,7 @@
 <%def name="body()">
 <%
 	i=0
-
+	index=0
 %>
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
@@ -11,7 +11,38 @@
 	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
 	<link rel="stylesheet" href="css/sonos.css" type="text/css" media="screen"/>
 
-       %for html in htmlslist:
-			<%include file="${html['main_page']}"/>
-	%endfor
+	
+		%for trackinfolist in trackinfolists:	
+			<%
+			  pluginname = trackinfolist['plugin']
+			  html = htmllist[pluginname]
+			%>
+			%for key,devices in trackinfolist.iteritems():
+				<%
+					print trackinfolist
+					if key != "plugin":
+						i = i + 500
+						mediatype = trackinfolist[key]['mediatyp']
+						devicename = trackinfolist[key]['devicename']
+						deviceip = trackinfolist[key]['deviceip']
+						if mediatype == "audio":
+							cover = trackinfolist[key]['cover']
+							title = trackinfolist[key]['title']
+							album = trackinfolist[key]['album']		
+							artist = trackinfolist[key]['artist']
+							duration = trackinfolist[key]['duration']
+							position = trackinfolist[key]['position']
+							volume = trackinfolist[key]['volume']
+							coverid = trackinfolist[key]['deviceip'].replace('.', '')
+						time = 6000 + i
+					else:
+						continue
+				%>	
+
+			%if pluginname != 'unknown':
+				<%include file="${html}" args="mediatype=mediatype, devicename=devicename, deviceip=deviceip, cover=cover, title=title, album=album, artist=artist, duration=duration, position=position, volume=volume, coverid=coverid, time=time, index=index"/>
+			%endif
+			%endfor
+		%endfor
+
 </%def>

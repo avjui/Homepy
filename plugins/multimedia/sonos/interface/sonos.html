@@ -1,29 +1,4 @@
-		<%
-			i=0
-		%>
-		%for trackinfolist in trackinfolists:	
-			%for key,devices in trackinfolist.iteritems():
-				<%
-					if key != "plugin":
-						i = i + 500
-						mediatype = trackinfolist[key]['mediatyp']
-						devicename = trackinfolist[key]['devicename']
-						deviceip = trackinfolist[key]['deviceip']
-						if mediatype == "audio":
-							cover = trackinfolist[key]['cover']
-							title = trackinfolist[key]['title']
-							album = trackinfolist[key]['album']		
-							artist = trackinfolist[key]['artist']
-							duration = trackinfolist[key]['duration']
-							position = trackinfolist[key]['position']
-							volume = trackinfolist[key]['volume']
-							coverid = trackinfolist[key]['deviceip'].replace('.', '')
-						time = 4000# + i
-					else:
-						continue
-
-				%>			
-		
+		<%page args="mediatype, devicename, deviceip, cover, title, album, artist, duration, position, volume, coverid, time, index" />
 		<div class="sonos" name ="sonos" align=center>
 		 	<table>
 			<tr><td>		
@@ -58,30 +33,31 @@
 			</table>
 		<script type="text/javascript">
 			// Update the cover
+			var slidervalue = ${volume};
 			$(document).ready(function() {
 				var title = $("#${coverid}-title").text()
 				window.setInterval(function(){
 				$.ajax({
 					type: 'POST',
 					dataType: 'json',
-					url: 'functionMultimedia',
-					data: 'device_name=${devicename}&function=getcover&current_title='+$("#${coverid}-title").text(),
+					url: 'action',
+					data: 'plugin_name=sonos&device_ip=${deviceip}&function=gettrackinfo&current_title='+$("#${coverid}-title").text(),
 					cache: true,
 					success: function(result) {
 						if (result == null) 
 							return
 						else{
-							$('#${coverid}').attr({'src': result[0] +"?"+ new Date().getTime()});
-							$('#${coverid}-1').attr({'src': result[0] +"?"+ new Date().getTime()});
-							$('#${coverid}-title').text(result[1]);
-							$('#${coverid}-album').text(result[2]);
-							$('#${coverid}-artist').text(result[3]);
+							$('#${coverid}').attr({'src': result['${devicename}'][2] +"?"+ new Date().getTime()});
+							$('#${coverid}-1').attr({'src': result['${devicename}'][2] +"?"+ new Date().getTime()});
+							$('#${coverid}-title').text(result['${devicename}'][3]);
+							$('#${coverid}-album').text(result['${devicename}'][4]);
+							$('#${coverid}-artist').text(result['${devicename}'][5]);
+							slidervalue = result['${devicename}'][8];
 							}
 						},
 					});
 			}, ${time});
 			$(function(){
-					var slidervalue = "20"
 					$("#volume-${coverid}").slider({
 									range:"min",
 									min:-1,
@@ -93,7 +69,7 @@
 									slidervalue  = $("#volume-${coverid}").slider('value');
 										},
 									change: function(event, ui) {
-										$.get("functionMultimedia", { device_ip:"${deviceip}", function:"volume", value : slidervalue });
+										$.get("action", { plugin_name:"sonos" , device_ip:"${deviceip}", function:"volume", value : slidervalue });
 										},
 								});
 					});
@@ -102,27 +78,25 @@
 
 			// Send th action for the player	
 			$('#play-${devicename}').click(function(){
-				$.get("functionMultimedia", { device_ip:"${deviceip}", function:"play" }).done(function(data) {
+				$.get("action", { plugin_name:"sonos", device_ip:"${deviceip}", function:"play" }).done(function(data) {
 			});
 			});
 
 			$('#pause-${devicename}').click(function(){
-			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"pause" });
+			    $.get("action", { plugin_name:"sonos", device_ip:"${deviceip}", function:"pause" });
 			});
 
 			$('#stop-${devicename}').click(function(){
-			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"stop" });
+			    $.get("action", { plugin_name:"sonos", device_ip:"${deviceip}", function:"stop" });
 			});
 
 			$('#fwd-${devicename}').click(function(){
-			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"next" });
+			    $.get("action", { plugin_name:"sonos", device_ip:"${deviceip}", function:"next" });
 			});
 
 			$('#rew-${devicename}').click(function(){
-			    $.get("functionMultimedia", { device_ip:"${deviceip}", function:"previous" });
+			    $.get("action", { plugin_name:"sonos", device_ip:"${deviceip}", function:"previous" });
 			});
 			
 		</script>
 		</div>
-		%endfor
-	%endfor

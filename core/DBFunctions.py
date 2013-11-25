@@ -6,7 +6,6 @@ import json
 import time
 
 import core
-from core.module.sonos.sonos import Sonos
 from core.Logger import log
 from core.Helper import Replacesq
 
@@ -153,93 +152,6 @@ class DBFunction:
 		connection.commit()
 		cursor.close()
 		return 
-
-
-	def AddSonos(self):
-
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		devices = Sonos().GetDeviceList()		
-
-		for sonos in devices:
-			cursor = connection.cursor()
-			cursor.execute('INSERT OR REPLACE INTO sonos (SonosIP, SonosName) VALUES(?,?)', (sonos[1], sonos[0].upper()))
-			connection.commit()
-
-		cursor.close()
-		
-		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		for device in devices:
-			
-			sql = "CREATE TABLE IF NOT EXISTS '%s' (OrderID INTEGER, DeviceName TEXT, DeviceIP TEXT, Title TEXT, AlbumName TEXT, Artist TEXT, AlbumArt TEXT)"% (device[0].upper())
-			cursor.execute(sql)
-			connection.commit()
-			sql = "INSERT OR REPLACE INTO '%s'(OrderID ,DeviceIP, DeviceName, Title, AlbumName, Artist, AlbumArt) VALUES (0, '', '', '', '', '', '')"% (device[0].upper())
-			cursor.execute(sql)
-			connection.commit()
-		cursor.close()
-
-		#Starting backgroundscan
-		SonosBackground= threading.Timer(5,SonosDB().UpdateSonosTable)
-		SonosBackground.start()
-
-		return True
-
-	def GetSonosList(self):
-
-
-		result = []
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		sql = "SELECT SonosIP, SonosName, SonosRoom FROM sonos"
-
-		try:
-			cursor.execute(sql)
-			result = cursor.fetchall()
-			cursor.close()
-		    	return result	
-		except:
-			return result
-
-
-	def UpdateSonosList(self, sonosName, sonosRoom):
-
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		sql = "UPDATE sonos SET SonosRoom='%s' WHERE SonosName='%s'", (sonosRoom, sonosName)
-
-		cursor.execute(sql)
-		connection.commit()
-		cursor.close()
-	    	return 
-
-
-
-	def RemoveSonos(self, sonosName):
-
-		connection = sqlite3.connect(core.DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		sql = "DELETE FROM sonos WHERE SonosName = '" + sonosName + "'"
-		cursor.execute(sql)
-		connection.commit()
-		cursor.close()
-
-		connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-		cursor = connection.cursor()
-
-		sql = "DROP TABLE IF EXISTS '" + sonosName + "'"
-
-		cursor.execute(sql)
-		connection.commit()
-		cursor.close()
-		log('Remove sonos device with %s Name from DB'% (sonosName), 'info')
-		return 	
 
 		
 	def AddXbmc(self, XbmcIP, XbmcName, XbmcUsername, XbmcPassword, XbmcRoom):
@@ -576,14 +488,15 @@ class DBFunction:
 		self.cursor = self.connection.cursor()
 
 		if Table == 'homeautomation':
-			sql = "DELETE FROM %s WHERE DeviceSerial = %s"% (Table, Serial)
+			sql = "DELETE FROM %s WHERE DeviceSerial ='%s'"% (Table, Serial)
 
 		elif Table == 'rooms':
-			sql = "DELETE FROM %s WHERE RoomName = %s"% (Table, roomName)
+			sql = "DELETE FROM %s WHERE RoomName ='%s'"% (Table, roomName)
 
 		else:
-			sql = "DELETE FROM %s WHERE IP = %s"% (Table, IP)
+			sql = "DELETE FROM %s WHERE IP ='%s'"% (Table, IP)
 
+		print sql
 		self.cursor.execute(sql)
 		self.connection.commit()
 		self.cursor.close()
@@ -597,12 +510,12 @@ class DBFunction:
 		self.cursor = self.connection.cursor()
 	
 		if Table == 'homeautomation':
-			if roomName == '' and company == '':
-				sql = "SELECT DeviceCompany, DeviceTyp, Name , DeviceSerial , Room, ValueType, DeviceValue, DeviceVisible FROM homeautomation ORDER BY OrderID"
+			if devicetype == 'interface':
+				sql = "SELECT  DeviceCompany, DeviceTyp, Name , DeviceSerial , IP, ValueType, DeviceValue, DeviceVisible, Room FROM homeautomation WHERE DeviceTyp='interface'"			
+			elif roomName == '' and company == '':
+				sql = "SELECT DeviceCompany, DeviceTyp, Name , DeviceSerial , Room, ValueType, DeviceValue, DeviceVisible, IP FROM homeautomation ORDER BY OrderID"
 			elif company !='':
 				sql = "SELECT DeviceTyp , Name , DeviceSerial, Room, ValueType, DeviceValue, DeviceVisible FROM homeautomation WHERE DeviceCompany='%s'"% (company)
-			elif devicetype == 'interface':
-				sql = "SELECT  DeviceCompany, DeviceTyp, Name , DeviceSerial , Room, ValueType, DeviceValue, DeviceVisible, Room FROM homeautomation WHERE DeviceTyp='interface'"			
 			else:
 				sql = "SELECT DeviceCompany, DeviceTyp , Name , DeviceSerial , ValueType, DeviceValue, DeviceVisible FROM homeautomation WHERE Room='%s'"% (roomName)
 		
@@ -639,6 +552,19 @@ class DBFunction:
 		self.cursor.close()
 		return self.result
 
+	def Update(self, Table, **kwargs):
+
+		connection = sqlite3.connect(core.DB_FILE, timeout=20)
+		cursor = connection.cursor()
+
+		sql = "UPDATE %s SET %s"% (Table, kwargs)
+		print sql
+		cursor.execute(sql)
+		connection.commit()
+		cursor.close()
+	    	return 
+
+
 	def CeckDatabase(self):
 
 		connection = sqlite3.connect(core.DB_FILE, timeout=20)
@@ -661,51 +587,3 @@ class DBFunction:
 		log("Checking DB", 'info')
 
 
-	
-class SonosDB:
-
-
-	def UpdateSonosTable(self):
-
-		try:
-			devices = Sonos().GetTrackInfo()
-		
-			connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-			cursor = connection.cursor()
-
-			for key,device in devices.iteritems():
-
-				title = Replacesq(device[3])
-				albumname = Replacesq(device[4])
-				artist = Replacesq(device[5])
-				
-		
-				sql = "UPDATE '%s' SET DeviceIP='%s', DeviceName='%s', Title='%s', AlbumName='%s', Artist='%s', AlbumArt='%s' WHERE OrderID=0"% (device[0].upper(), device[1], device[0], title , albumname, artist,device[2])
-				cursor.execute(sql)
-				connection.commit()
-	
-			cursor.close()
-			log('Sonos table was updatet', 'debug')
-
-		except Exception,e:
-			log(e, 'error')	
-
-
-	def GetZoneInfo(self, zoneName=''):
-
-		self.data = {}
-
-		#self.devices = DBFunction().GetSonosList()
-				
-		#self.connection = sqlite3.connect(core.SONOS_DB_FILE, timeout=20)
-		#self.cursor = self.connection.cursor()
-
-		#for self.device in self.devices:
-
-		#	self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist  FROM '%s'"% (self.device[1].upper())
-		#	self.cursor.execute(self.sql)
-		#	self.result = self.cursor.fetchall()
-		#	self.data[self.device[1]] = self.result 
-
-		#self.cursor.close()
-		return self.data

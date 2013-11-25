@@ -1,14 +1,3 @@
-<%inherit file="base.html"/>
-
-<%def name="body()">
-	<div class="config_sonos" align=center>
-	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-min.js"></script>
-	<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-	<link rel="stylesheet" href="css/jquery.css" type="text/css" media="screen"/>
-	<link rel="stylesheet" href="css/config_sonos.css" type="text/css" media="screen"/>
-		<p>		 
-			<lable><h1><u>${title}</u></h1></lable>
 				<table id="interfacesort" class="grid" cellpadding="5" align=center >
 					<thead>
 						<tr><th>IP</th><th>Device Name</th><th>Room</th><th colspan="2">Action</th></tr>
@@ -38,6 +27,3 @@
 
 			<input style="width:150px" type="button" onclick="location.href='searchForSonos'" value="Serach for New Device"></p>
 		</p>
-	</div>
-	
-</%def>

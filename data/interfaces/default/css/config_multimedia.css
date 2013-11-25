@@ -1,8 +1,7 @@
 div.main {
+	clear: both;
 	background:#444;
-	position:absolute;
-	top:300;
-	left:120;
+	position:relative;
 	width:auto;
 	padding-left:30px;
 	padding-right:30px;
@@ -16,6 +15,40 @@ div.main {
 	-moz-box-shadow:0px 0px 4px #000 inset;
 	-webkit-box-shadow:0px 0px 4px #000 inset;
 	box-shadow:0px 0px 4px #000 inset;
+}
+
+div.main div#container{
+	margin: 7em auto;
+	position: relative;
+	top: -35px;
+	z-index:3;
+}
+
+div.main div#container ul{
+	list-style: none;
+	list-style-position: outside;
+}
+
+div.main div#container  ul li a{
+	float: left;
+	margin-right: 5px;
+	margin-bottom: -1px;
+}
+
+div.main div#container ul li a{
+	font-weight: 700;
+	display: block;
+	padding: 5px 10px 12px 10px;
+	background: #444;
+	margin-bottom: -10px;
+    	box-shadow:0px 0px 4px #000 inset;
+	position: relative;
+	color: white;
+	cursor: pointer;
+}
+
+div.main div ul.tabs li.active a{
+	color: #5f95ef;
 }
 
 div.main div.config_xbmc td{

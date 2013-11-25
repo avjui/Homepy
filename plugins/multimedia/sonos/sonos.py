@@ -11,8 +11,8 @@ import sqlite3
 import logging
 
 # lib module
-from lib.sonos.soco import SoCo
-from lib.sonos.soco import SonosDiscovery
+from src.soco import SoCo
+from src.soco import SonosDiscovery
 import lib.feedparser as feedparser
 
 # core module
@@ -67,20 +67,35 @@ class Sonos(Multimedia):
 		self._BackgroundCheck()	
 				
 
-	def action(self, zonenip, function, value=''):
+	def action(self, device_ip, **kwargs):
 		
-		self.sonos = SoCo(zonenip)
+		self.sonos = SoCo(device_ip)
+		self.function = kwargs['function']
 
-		self.func = getattr(self.sonos,function)
-		if value == '':
-			self.func()
+		try:
+			#First we try build in function
+			self.func = getattr(self,self.function)
+
+		except AttributeError:
+			
+			#if this faild we have a look into soco libs
+			self.func = getattr(self.sonos,self.function)
+
+		if 'value' in kwargs.keys():
+			self.data = self.func(kwargs['value'])
 		else:
-			self.func(value)
-		log('Function %s for %s IP'% (function, zonenip), 'debug')
+			self.data = self.func()
+
+		log('Function[%s] for [%s] return : %s'% (self.function, device_ip, self.data), 'debug')
+		return self.data
 
 	def get_mediainfo(self):
 
 		self.result = self._GetZoneInfo()
+		return self.result
+
+	def gettrackinfo(self):
+		self.result = self._GetTrackInfo()
 		return self.result
 
 	def _BackgroundCheck(self):
@@ -184,7 +199,7 @@ class Sonos(Multimedia):
 		except Exception as e:
 			print e
 			 
-		#log('Function [GetTrackInfo : %s ]'% (self.art), 'debug')
+		log('Plugin[%s] : Function[GetTrackInfo] : %s ]'% (self.name, self.art), 'debug')
 		return self.art
 
 	def _CreateSonosTable(self, devices):
@@ -233,7 +248,7 @@ class Sonos(Multimedia):
 
 	def _GetZoneInfo(self, zoneName=''):
 
-		self.data = {}
+		self.mediainfo = {'plugin' : self.name}
 
 		self.devices = DBFunction().GetList('multimedia', company='SONOS')
 				
@@ -245,7 +260,6 @@ class Sonos(Multimedia):
 			self.sql = "SELECT DeviceName, DeviceIP, AlbumArt, Title, AlbumName, Artist, Duration, Position, Volume  FROM '%s'"% (self.device[2].upper())
 			self.cursor.execute(self.sql)
 			self.result = self.cursor.fetchall()
-			#print self.result
 	 		for record in self.result:
 				self.resultdic = ({'mediatyp' : 'audio',
 							'devicename' : record[0],
@@ -258,12 +272,8 @@ class Sonos(Multimedia):
 							'position' : record[7],
 							'volume' : record[8],
 						})	
-			#print self.resultdic
-			self.data[self.device[1]] = self.resultdic 
-
+			
+			self.mediainfo[self.device[1]] = self.resultdic
 		self.cursor.close()
-		self.mediainfo = { 'plugin' : self.name,
-				      self.device[1] : self.resultdic
-				   }
-					
+			
 		return self.mediainfo

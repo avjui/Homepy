@@ -6,8 +6,7 @@ SYS_ENCODING = None
 PROG_DAEMONIZE = False
 
 CFG = None
-DB_FILE = None
-SONOS_DB_FILE = None
+DB_FILE = 'homepy.db'
 CONFIG_FILE = None
 
 HTTP_PORT = None
